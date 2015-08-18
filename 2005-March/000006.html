@@ -1,0 +1,162 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Specie-svn] r8 - in trunk: content/specie locale/en-US/specie
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/specie-svn/2005-March/index.html" >
+   <LINK REL="made" HREF="mailto:specie-svn%40lists.berlios.de?Subject=Re%3A%20%5BSpecie-svn%5D%20r8%20-%20in%20trunk%3A%20content/specie%20locale/en-US/specie&In-Reply-To=%3C200503240224.j2O2OXrm015242%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000005.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Specie-svn] r8 - in trunk: content/specie locale/en-US/specie</H1>
+    <B>Todd Ross at BerliOS</B> 
+    <A HREF="mailto:specie-svn%40lists.berlios.de?Subject=Re%3A%20%5BSpecie-svn%5D%20r8%20-%20in%20trunk%3A%20content/specie%20locale/en-US/specie&In-Reply-To=%3C200503240224.j2O2OXrm015242%40sheep.berlios.de%3E"
+       TITLE="[Specie-svn] r8 - in trunk: content/specie locale/en-US/specie">brainsick at sheep.berlios.de
+       </A><BR>
+    <I>Thu Mar 24 03:24:33 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000005.html">[Specie-svn] r7 - in trunk: content/specie locale/en-US/specie skin/specie
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#6">[ date ]</a>
+              <a href="thread.html#6">[ thread ]</a>
+              <a href="subject.html#6">[ subject ]</a>
+              <a href="author.html#6">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: brainsick
+Date: 2005-03-24 03:24:10 +0100 (Thu, 24 Mar 2005)
+New Revision: 8
+
+Modified:
+   trunk/content/specie/specie.js
+   trunk/content/specie/specie.xul
+   trunk/locale/en-US/specie/specie.dtd
+   trunk/locale/en-US/specie/specie.properties
+Log:
+file new stub
+
+Modified: trunk/content/specie/specie.js
+===================================================================
+--- trunk/content/specie/specie.js	2005-03-24 01:38:38 UTC (rev 7)
++++ trunk/content/specie/specie.js	2005-03-24 02:24:10 UTC (rev 8)
+@@ -41,6 +41,10 @@
+   contentFrame.setAttribute(&quot;src&quot;, which + &quot;Panel.xul&quot;);
+ }
+ 
++function doNew() {
++  
++}
++
+ function doFileOpen(options) {
+   var strbundle = document.getElementById(&quot;stringbundle_specie&quot;);
+   var filename = &quot;&quot;;
+
+Modified: trunk/content/specie/specie.xul
+===================================================================
+--- trunk/content/specie/specie.xul	2005-03-24 01:38:38 UTC (rev 7)
++++ trunk/content/specie/specie.xul	2005-03-24 02:24:10 UTC (rev 8)
+@@ -54,6 +54,7 @@
+   &lt;script type=&quot;application/x-javascript&quot; src=&quot;specie.js&quot;/&gt;
+ 
+   &lt;commandset id=&quot;commands&quot;&gt;
++    &lt;command id=&quot;cmd_new&quot; oncommand=&quot;doFileNew();&quot;/&gt;
+     &lt;command id=&quot;cmd_open&quot; oncommand=&quot;doFileOpen();&quot;/&gt;
+     &lt;command id=&quot;cmd_quit&quot; oncommand=&quot;window.close();&quot;/&gt;
+     &lt;command id=&quot;cmd_chart&quot; oncommand=&quot;doDisplayPanel('chartOfAccounts');&quot;/&gt;
+@@ -61,6 +62,7 @@
+   &lt;/commandset&gt;
+ 
+   &lt;keyset&gt;
++    &lt;key id=&quot;key_new&quot; key=&quot;&amp;cmd.new.key;&quot; modifiers=&quot;accel&quot; command=&quot;cmd_new&quot;/&gt;
+     &lt;key id=&quot;key_open&quot; key=&quot;&amp;cmd.open.key;&quot; modifiers=&quot;accel&quot; command=&quot;cmd_open&quot;/&gt;
+     &lt;key id=&quot;key_quit&quot; key=&quot;&amp;cmd.quit.key;&quot; modifiers=&quot;accel&quot; command=&quot;cmd_quit&quot;/&gt;
+   &lt;/keyset&gt;
+@@ -69,6 +71,9 @@
+     &lt;menubar&gt;
+       &lt;menu id=&quot;menu_file&quot; label=&quot;&amp;menu.file.label;&quot; accesskey=&quot;&amp;menu.file.accesskey;&quot;&gt;
+         &lt;menupopup id=&quot;menupopup_file&quot;&gt;
++          &lt;menuitem id=&quot;menuitem_new&quot; label=&quot;&amp;menuitem.new.label;&quot;
++            key=&quot;key_new&quot; accesskey=&quot;&amp;menuitem.new.accesskey;&quot;
++            command=&quot;cmd_new&quot;/&gt;
+           &lt;menuitem id=&quot;menuitem_open&quot; label=&quot;&amp;menuitem.open.label;&quot;
+             key=&quot;key_open&quot; accesskey=&quot;&amp;menuitem.open.accesskey;&quot;
+             command=&quot;cmd_open&quot;/&gt;
+
+Modified: trunk/locale/en-US/specie/specie.dtd
+===================================================================
+--- trunk/locale/en-US/specie/specie.dtd	2005-03-24 01:38:38 UTC (rev 7)
++++ trunk/locale/en-US/specie/specie.dtd	2005-03-24 02:24:10 UTC (rev 8)
+@@ -34,14 +34,19 @@
+    -
+    - ***** END LICENSE BLOCK ***** --&gt;
+ 
++&lt;!-- $Id$ --&gt;
++
+ &lt;!ENTITY window.specie.title &quot;Specie&quot;&gt;
+ 
++&lt;!ENTITY cmd.new.key &quot;N&quot;&gt;
+ &lt;!ENTITY cmd.quit.key &quot;Q&quot;&gt;
+ &lt;!ENTITY cmd.open.key &quot;O&quot;&gt;
+ 
+ &lt;!ENTITY menu.file.label &quot;File&quot;&gt;
+ &lt;!ENTITY menu.file.accesskey &quot;f&quot;&gt;
+ 
++&lt;!ENTITY menuitem.new.label &quot;New&quot;&gt;
++&lt;!ENTITY menuitem.new.accesskey &quot;n&quot;&gt;
+ &lt;!ENTITY menuitem.open.label &quot;Open&quot;&gt;
+ &lt;!ENTITY menuitem.open.accesskey &quot;o&quot;&gt;
+ &lt;!ENTITY menuitem.quit.label &quot;Quit&quot;&gt;
+
+Modified: trunk/locale/en-US/specie/specie.properties
+===================================================================
+--- trunk/locale/en-US/specie/specie.properties	2005-03-24 01:38:38 UTC (rev 7)
++++ trunk/locale/en-US/specie/specie.properties	2005-03-24 02:24:10 UTC (rev 8)
+@@ -34,5 +34,7 @@
+ #
+ # ***** END LICENSE BLOCK *****
+ 
++# $Id$ #
++
+ file.exists.not = File %s doesn't exist
+ filepicker.open.title = File Open
+
+
+Property changes on: trunk/locale/en-US/specie/specie.properties
+___________________________________________________________________
+Name: svn:keywords
+   + Id
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000005.html">[Specie-svn] r7 - in trunk: content/specie locale/en-US/specie skin/specie
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#6">[ date ]</a>
+              <a href="thread.html#6">[ thread ]</a>
+              <a href="subject.html#6">[ subject ]</a>
+              <a href="author.html#6">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/specie-svn">More information about the Specie-svn
+mailing list</a><br>
+</body></html>

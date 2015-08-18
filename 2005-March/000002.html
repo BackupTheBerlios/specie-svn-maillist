@@ -1,0 +1,305 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Specie-svn] r4 - trunk/content/specie
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/specie-svn/2005-March/index.html" >
+   <LINK REL="made" HREF="mailto:specie-svn%40lists.berlios.de?Subject=Re%3A%20%5BSpecie-svn%5D%20r4%20-%20trunk/content/specie&In-Reply-To=%3C200503202234.j2KMYHn1006773%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000001.html">
+   <LINK REL="Next"  HREF="000003.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Specie-svn] r4 - trunk/content/specie</H1>
+    <B>Todd Ross at BerliOS</B> 
+    <A HREF="mailto:specie-svn%40lists.berlios.de?Subject=Re%3A%20%5BSpecie-svn%5D%20r4%20-%20trunk/content/specie&In-Reply-To=%3C200503202234.j2KMYHn1006773%40sheep.berlios.de%3E"
+       TITLE="[Specie-svn] r4 - trunk/content/specie">brainsick at sheep.berlios.de
+       </A><BR>
+    <I>Sun Mar 20 23:34:17 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000001.html">[Specie-svn] r3 - trunk/content/specie
+</A></li>
+        <LI>Next message: <A HREF="000003.html">[Specie-svn] r5 - trunk/content/specie
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#2">[ date ]</a>
+              <a href="thread.html#2">[ thread ]</a>
+              <a href="subject.html#2">[ subject ]</a>
+              <a href="author.html#2">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: brainsick
+Date: 2005-03-20 23:34:17 +0100 (Sun, 20 Mar 2005)
+New Revision: 4
+
+Added:
+   trunk/content/specie/ChartOfAccounts.js
+   trunk/content/specie/ChartOfAccountsTest.html
+Log:
+Chart of Accounts
+
+Added: trunk/content/specie/ChartOfAccounts.js
+===================================================================
+--- trunk/content/specie/ChartOfAccounts.js	2005-03-20 22:25:44 UTC (rev 3)
++++ trunk/content/specie/ChartOfAccounts.js	2005-03-20 22:34:17 UTC (rev 4)
+@@ -0,0 +1,120 @@
++/* ***** BEGIN LICENSE BLOCK *****
++ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
++ *
++ * The contents of this file are subject to the Mozilla Public License Version
++ * 1.1 (the &quot;License&quot;); you may not use this file except in compliance with
++ * the License. You may obtain a copy of the License at
++ * <A HREF="http://www.mozilla.org/MPL/">http://www.mozilla.org/MPL/</A>
++ *
++ * Software distributed under the License is distributed on an &quot;AS IS&quot; basis,
++ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
++ * for the specific language governing rights and limitations under the
++ * License.
++ *
++ * The Original Code is Specie Classes.
++ *
++ * The Initial Developer of the Original Code is
++ * Todd Ross.
++ * Portions created by the Initial Developer are Copyright (C) 2005
++ * the Initial Developer. All Rights Reserved.
++ *
++ * Contributor(s):
++ *
++ * Alternatively, the contents of this file may be used under the terms of
++ * either the GNU General Public License Version 2 or later (the &quot;GPL&quot;), or
++ * the GNU Lesser General Public License Version 2.1 or later (the &quot;LGPL&quot;),
++ * in which case the provisions of the GPL or the LGPL are applicable instead
++ * of those above. If you wish to allow use of your version of this file only
++ * under the terms of either the GPL or the LGPL, and not to allow others to
++ * use your version of this file under the terms of the MPL, indicate your
++ * decision by deleting the provisions above and replace them with the notice
++ * and other provisions required by the GPL or the LGPL. If you do not delete
++ * the provisions above, a recipient may use your version of this file under
++ * the terms of any one of the MPL, the GPL or the LGPL.
++ *
++ * ***** END LICENSE BLOCK ***** */
++
++/* $Id$ */
++
++function ChartOfAccounts() {
++	this.accounts = new Array();
++	this.filename = null;
++
++	// Used by private methods
++	var self = this;
++
++	// Private member
++	function flattenAccount(aAccount) {
++dump(&quot;aAccount.name: &quot; + aAccount.name);
++		var returnValue = new Array();
++
++dump(&quot;aAccount.hasChildAccounts(): &quot; + aAccount.hasChildAccounts());
++		returnValue.push(aAccount);
++		if (aAccount.hasChildAccounts()) {
++			for (var i = 0; i &lt; aAccount.children.length; i++) {
++				returnValue = returnValue.concat(flattenAccount(aAccount.children[i]));
++			}
++		}
++
++dump(&quot;returnValue.length: &quot; + returnValue.length);
++		return returnValue;
++	}
++
++	// Privelaged method
++	this.toString = function() {
++		var returnString = &quot;&quot;;
++		var allAccounts = new Array();
++		for (var i = 0; i &lt; this.accounts.length; i++) {
++			allAccounts = allAccounts.concat(flattenAccount(this.accounts[i]));
++		}
++dump(&quot;allAccounts.length: &quot; + allAccounts.length);
++
++		returnString += &quot;[&quot;;
++		for (var i = 0; i &lt; allAccounts.length; i++) {
++			returnString += allAccounts[i].toString();
++			if (i &lt; allAccounts.length - 1) {
++				returnString += &quot;,&quot;;
++			}
++		}
++		returnString += &quot;]&quot;;
++
++		return returnString;
++	}
++
++	// Initialize common accounts that all Charts share
++	var aAccount = new Account;
++	aAccount.id = 0;
++	aAccount.type = &quot;A&quot;;
++	aAccount.name = &quot;Asset&quot;;
++	this.accounts.push(aAccount);
++
++	aAccount = new Account;
++	aAccount.id = 1;
++	aAccount.type = &quot;L&quot;;
++	aAccount.name = &quot;Liability&quot;;
++	this.accounts.push(aAccount);
++
++	aAccount = new Account;
++	aAccount.id = 2;
++	aAccount.type = &quot;P&quot;;
++	aAccount.name = &quot;Equity&quot;;
++	this.accounts.push(aAccount);
++
++	aAccount = new Account;
++	aAccount.id = 3;
++	aAccount.type = &quot;I&quot;;
++	aAccount.name = &quot;Income&quot;;
++	this.accounts.push(aAccount);
++
++	aAccount = new Account();
++	aAccount.id = &quot;4&quot;;
++	aAccount.type = &quot;E&quot;;
++	aAccount.name = &quot;Expense&quot;;
++	this.accounts.push(aAccount);
++}
++
++ChartOfAccounts.prototype.load = function(filename) {
++}
++
++ChartOfAccounts.prototype.save = function(filename) {
++}
+
+
+Property changes on: trunk/content/specie/ChartOfAccounts.js
+___________________________________________________________________
+Name: svn:keywords
+   + Id
+
+Added: trunk/content/specie/ChartOfAccountsTest.html
+===================================================================
+--- trunk/content/specie/ChartOfAccountsTest.html	2005-03-20 22:25:44 UTC (rev 3)
++++ trunk/content/specie/ChartOfAccountsTest.html	2005-03-20 22:34:17 UTC (rev 4)
+@@ -0,0 +1,90 @@
++&lt;!-- ***** BEGIN LICENSE BLOCK *****
++   - Version: MPL 1.1/GPL 2.0/LGPL 2.1
++   -
++   - The contents of this file are subject to the Mozilla Public License Version
++   - 1.1 (the &quot;License&quot;); you may not use this file except in compliance with
++   - the License. You may obtain a copy of the License at
++   - <A HREF="http://www.mozilla.org/MPL/">http://www.mozilla.org/MPL/</A>
++   -
++   - Software distributed under the License is distributed on an &quot;AS IS&quot; basis,
++   - WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
++   - for the specific language governing rights and limitations under the
++   - License.
++   -
++   - The Original Code is Specie Test Cases.
++   -
++   - The Initial Developer of the Original Code is
++   - Todd Ross.
++   - Portions created by the Initial Developer are Copyright (C) 2005
++   - the Initial Developer. All Rights Reserved.
++   -
++   - Contributor(s):
++   -
++   - Alternatively, the contents of this file may be used under the terms of
++   - either the GNU General Public License Version 2 or later (the &quot;GPL&quot;), or
++   - the GNU Lesser General Public License Version 2.1 or later (the &quot;LGPL&quot;),
++   - in which case the provisions of the GPL or the LGPL are applicable instead
++   - of those above. If you wish to allow use of your version of this file only
++   - under the terms of either the GPL or the LGPL, and not to allow others to
++   - use your version of this file under the terms of the MPL, indicate your
++   - decision by deleting the provisions above and replace them with the notice
++   - and other provisions required by the LGPL or the GPL. If you do not delete
++   - the provisions above, a recipient may use your version of this file under
++   - the terms of any one of the MPL, the GPL or the LGPL.
++   -
++   - ***** END LICENSE BLOCK ***** --&gt;
++
++&lt;!-- $Id$ --&gt;
++
++&lt;html&gt;
++	&lt;head&gt;
++		&lt;title&gt;ChartOfAccountsTest.html&lt;/title&gt;
++		&lt;script type=&quot;text/javascript&quot; src=&quot;ChartOfAccounts.js&quot;&gt;&lt;/script&gt;
++		&lt;script type=&quot;text/javascript&quot; src=&quot;Account.js&quot;&gt;&lt;/script&gt;
++		&lt;script type=&quot;text/javascript&quot;&gt;
++			function body_onload() {
++				var aChartOfAccounts = new ChartOfAccounts();
++
++				// This is really messy
++				var assetAccount = aChartOfAccounts.accounts[0];
++
++				var aSavingsAccount = assetAccount.createChild();
++				aSavingsAccount.name = &quot;Savings&quot;;
++				assetAccount.appendChild(aSavingsAccount);
++
++				var aSubSavingsAccount = aSavingsAccount.createChild();
++				aSubSavingsAccount.name = &quot;ABC Bank&quot;;
++				aSavingsAccount.appendChild(aSubSavingsAccount);
++
++				aSubSavingsAccount = aSavingsAccount.createChild();
++				aSubSavingsAccount.name = &quot;XYZ Credit Union&quot;;
++				aSavingsAccount.appendChild(aSubSavingsAccount);
++
++				aAccount = assetAccount.createChild();
++				aAccount.name = &quot;Checking&quot;;
++				assetAccount.appendChild(aAccount);
++
++				var liabilityAccount = aChartOfAccounts.accounts[1];
++
++				var aLiabilityAccount = liabilityAccount.createChild();
++				aLiabilityAccount.name = &quot;Credit Card&quot;;
++				liabilityAccount.appendChild(aLiabilityAccount);
++
++				var aSubLiabilityAccount = aLiabilityAccount.createChild();
++				aSubLiabilityAccount.name = &quot;ABC Bank&quot;;
++				aLiabilityAccount.appendChild(aSubLiabilityAccount);
++
++				var outputString = aChartOfAccounts.toString();
++				outputString = outputString.replace(/{/g, &quot;\n\t{&quot;);
++				outputString = outputString.replace(/]$/, &quot;\n]&quot;);
++				outputString.replace(/\n/g, &quot;&lt;br/&gt;&quot;);
++
++				var output_div = document.getElementById(&quot;output&quot;);
++				output_div.innerHTML += &quot;aChartOfAccounts.toString(): &lt;br/&gt;&quot; + outputString.replace(/\n/g, &quot;&lt;br/&gt;&quot;) + &quot;&lt;br/&gt;&quot;;
++			}
++		&lt;/script&gt;
++	&lt;/head&gt;
++	&lt;body onload=&quot;body_onload();&quot;&gt;
++		&lt;div id=&quot;output&quot;&gt;&lt;/div&gt;
++	&lt;/body&gt;
++&lt;/html&gt;
+
+
+Property changes on: trunk/content/specie/ChartOfAccountsTest.html
+___________________________________________________________________
+Name: svn:keywords
+   + Id
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000001.html">[Specie-svn] r3 - trunk/content/specie
+</A></li>
+	<LI>Next message: <A HREF="000003.html">[Specie-svn] r5 - trunk/content/specie
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#2">[ date ]</a>
+              <a href="thread.html#2">[ thread ]</a>
+              <a href="subject.html#2">[ subject ]</a>
+              <a href="author.html#2">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/specie-svn">More information about the Specie-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,395 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Specie-svn] r6 - in trunk: content/specie locale/en-US/specie skin/specie
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/specie-svn/2005-March/index.html" >
+   <LINK REL="made" HREF="mailto:specie-svn%40lists.berlios.de?Subject=Re%3A%20%5BSpecie-svn%5D%20r6%20-%20in%20trunk%3A%20content/specie%20locale/en-US/specie%20skin/specie&In-Reply-To=%3C200503230208.j2N28oiw017242%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000003.html">
+   <LINK REL="Next"  HREF="000005.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Specie-svn] r6 - in trunk: content/specie locale/en-US/specie skin/specie</H1>
+    <B>Todd Ross at BerliOS</B> 
+    <A HREF="mailto:specie-svn%40lists.berlios.de?Subject=Re%3A%20%5BSpecie-svn%5D%20r6%20-%20in%20trunk%3A%20content/specie%20locale/en-US/specie%20skin/specie&In-Reply-To=%3C200503230208.j2N28oiw017242%40sheep.berlios.de%3E"
+       TITLE="[Specie-svn] r6 - in trunk: content/specie locale/en-US/specie skin/specie">brainsick at sheep.berlios.de
+       </A><BR>
+    <I>Wed Mar 23 03:08:50 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000003.html">[Specie-svn] r5 - trunk/content/specie
+</A></li>
+        <LI>Next message: <A HREF="000005.html">[Specie-svn] r7 - in trunk: content/specie locale/en-US/specie skin/specie
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#4">[ date ]</a>
+              <a href="thread.html#4">[ thread ]</a>
+              <a href="subject.html#4">[ subject ]</a>
+              <a href="author.html#4">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: brainsick
+Date: 2005-03-23 03:07:58 +0100 (Wed, 23 Mar 2005)
+New Revision: 6
+
+Added:
+   trunk/content/specie/chartOfAccountsPanel.xul
+   trunk/content/specie/journalPanel.xul
+Modified:
+   trunk/content/specie/specie.js
+   trunk/content/specie/specie.xul
+   trunk/locale/en-US/specie/specie.dtd
+   trunk/skin/specie/specie.css
+Log:
+user interface work
+
+Added: trunk/content/specie/chartOfAccountsPanel.xul
+===================================================================
+--- trunk/content/specie/chartOfAccountsPanel.xul	2005-03-21 03:32:52 UTC (rev 5)
++++ trunk/content/specie/chartOfAccountsPanel.xul	2005-03-23 02:07:58 UTC (rev 6)
+@@ -0,0 +1,54 @@
++&lt;?xml version=&quot;1.0&quot;?&gt;
++
++&lt;!-- ***** BEGIN LICENSE BLOCK *****
++   - Version: MPL 1.1/GPL 2.0/LGPL 2.1
++   -
++   - The contents of this file are subject to the Mozilla Public License Version
++   - 1.1 (the &quot;License&quot;); you may not use this file except in compliance with
++   - the License. You may obtain a copy of the License at
++   - <A HREF="http://www.mozilla.org/MPL/">http://www.mozilla.org/MPL/</A>
++   -
++   - Software distributed under the License is distributed on an &quot;AS IS&quot; basis,
++   - WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
++   - for the specific language governing rights and limitations under the
++   - License.
++   -
++   - The Original Code is Specie User Interface.
++   -
++   - The Initial Developer of the Original Code is
++   - Todd Ross.
++   - Portions created by the Initial Developer are Copyright (C) 2005
++   - the Initial Developer. All Rights Reserved.
++   -
++   - Contributor(s):
++   -
++   - Alternatively, the contents of this file may be used under the terms of
++   - either the GNU General Public License Version 2 or later (the &quot;GPL&quot;), or
++   - the GNU Lesser General Public License Version 2.1 or later (the &quot;LGPL&quot;),
++   - in which case the provisions of the GPL or the LGPL are applicable instead
++   - of those above. If you wish to allow use of your version of this file only
++   - under the terms of either the GPL or the LGPL, and not to allow others to
++   - use your version of this file under the terms of the MPL, indicate your
++   - decision by deleting the provisions above and replace them with the notice
++   - and other provisions required by the LGPL or the GPL. If you do not delete
++   - the provisions above, a recipient may use your version of this file under
++   - the terms of any one of the MPL, the GPL or the LGPL.
++   -
++   - ***** END LICENSE BLOCK ***** --&gt;
++
++&lt;!-- $Id$ --&gt;
++
++&lt;?xml-stylesheet href=&quot;<A HREF="chrome://global/skin/">chrome://global/skin/</A>&quot; type=&quot;text/css&quot;?&gt;
++&lt;?xml-stylesheet href=&quot;<A HREF="chrome://specie/skin/">chrome://specie/skin/</A>&quot; type=&quot;text/css&quot;?&gt;
++
++&lt;!DOCTYPE window SYSTEM &quot;<A HREF="chrome://specie/locale/">chrome://specie/locale/</A>&quot;&gt;
++
++&lt;window id=&quot;window_chartOfAccounts&quot; title=&quot;&amp;window.chartOfAccounts.title;&quot;
++  xmlns=&quot;<A HREF="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul</A>&quot;&gt;
++
++  &lt;!-- script type=&quot;application/x-javascript&quot; src=&quot;chartOfAccounts.js&quot;/ --&gt;
++
++  &lt;label id=&quot;label_title&quot; value=&quot;&amp;window.chartOfAccounts.title;&quot;/&gt;
++  &lt;hbox flex=&quot;1&quot;&gt;
++  &lt;/hbox&gt;
++&lt;/window&gt;
+
+
+Property changes on: trunk/content/specie/chartOfAccountsPanel.xul
+___________________________________________________________________
+Name: svn:keywords
+   + Id
+
+Added: trunk/content/specie/journalPanel.xul
+===================================================================
+--- trunk/content/specie/journalPanel.xul	2005-03-21 03:32:52 UTC (rev 5)
++++ trunk/content/specie/journalPanel.xul	2005-03-23 02:07:58 UTC (rev 6)
+@@ -0,0 +1,54 @@
++&lt;?xml version=&quot;1.0&quot;?&gt;
++
++&lt;!-- ***** BEGIN LICENSE BLOCK *****
++   - Version: MPL 1.1/GPL 2.0/LGPL 2.1
++   -
++   - The contents of this file are subject to the Mozilla Public License Version
++   - 1.1 (the &quot;License&quot;); you may not use this file except in compliance with
++   - the License. You may obtain a copy of the License at
++   - <A HREF="http://www.mozilla.org/MPL/">http://www.mozilla.org/MPL/</A>
++   -
++   - Software distributed under the License is distributed on an &quot;AS IS&quot; basis,
++   - WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
++   - for the specific language governing rights and limitations under the
++   - License.
++   -
++   - The Original Code is Specie User Interface.
++   -
++   - The Initial Developer of the Original Code is
++   - Todd Ross.
++   - Portions created by the Initial Developer are Copyright (C) 2005
++   - the Initial Developer. All Rights Reserved.
++   -
++   - Contributor(s):
++   -
++   - Alternatively, the contents of this file may be used under the terms of
++   - either the GNU General Public License Version 2 or later (the &quot;GPL&quot;), or
++   - the GNU Lesser General Public License Version 2.1 or later (the &quot;LGPL&quot;),
++   - in which case the provisions of the GPL or the LGPL are applicable instead
++   - of those above. If you wish to allow use of your version of this file only
++   - under the terms of either the GPL or the LGPL, and not to allow others to
++   - use your version of this file under the terms of the MPL, indicate your
++   - decision by deleting the provisions above and replace them with the notice
++   - and other provisions required by the LGPL or the GPL. If you do not delete
++   - the provisions above, a recipient may use your version of this file under
++   - the terms of any one of the MPL, the GPL or the LGPL.
++   -
++   - ***** END LICENSE BLOCK ***** --&gt;
++
++&lt;!-- $Id$ --&gt;
++
++&lt;?xml-stylesheet href=&quot;<A HREF="chrome://global/skin/">chrome://global/skin/</A>&quot; type=&quot;text/css&quot;?&gt;
++&lt;?xml-stylesheet href=&quot;<A HREF="chrome://specie/skin/">chrome://specie/skin/</A>&quot; type=&quot;text/css&quot;?&gt;
++
++&lt;!DOCTYPE window SYSTEM &quot;<A HREF="chrome://specie/locale/">chrome://specie/locale/</A>&quot;&gt;
++
++&lt;window id=&quot;window_journal&quot; title=&quot;&amp;window.journal.title;&quot;
++  xmlns=&quot;<A HREF="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul</A>&quot;&gt;
++
++  &lt;!-- script type=&quot;application/x-javascript&quot; src=&quot;journal.js&quot;/ --&gt;
++
++  &lt;label id=&quot;label_title&quot; value=&quot;&amp;window.journal.title;&quot;/&gt;
++  &lt;hbox flex=&quot;1&quot;&gt;
++  &lt;/hbox&gt;
++&lt;/window&gt;
+
+
+Property changes on: trunk/content/specie/journalPanel.xul
+___________________________________________________________________
+Name: svn:keywords
+   + Id
+
+Modified: trunk/content/specie/specie.js
+===================================================================
+--- trunk/content/specie/specie.js	2005-03-21 03:32:52 UTC (rev 5)
++++ trunk/content/specie/specie.js	2005-03-23 02:07:58 UTC (rev 6)
+@@ -36,11 +36,7 @@
+ 
+ /* $Id$ */
+ 
+-function menuFileNew() {
++function doDisplayPanel(which) {
++  var contentFrame = document.getElementById(&quot;iframe_content&quot;);
++  contentFrame.setAttribute(&quot;src&quot;, which + &quot;Panel.xul&quot;);
+ }
+-
+-function menuFileOpen() {
+-}
+-
+-function menuFileExit() {
+-}
+
+Modified: trunk/content/specie/specie.xul
+===================================================================
+--- trunk/content/specie/specie.xul	2005-03-21 03:32:52 UTC (rev 5)
++++ trunk/content/specie/specie.xul	2005-03-23 02:07:58 UTC (rev 6)
+@@ -38,54 +38,45 @@
+ 
+ &lt;!-- $Id$ --&gt;
+ 
+-&lt;?xml-stylesheet href=&quot;<A HREF="chrome://specie/skin/specie.css">chrome://specie/skin/specie.css</A>&quot; type=&quot;text/css&quot;?&gt;
++&lt;?xml-stylesheet href=&quot;<A HREF="chrome://global/skin/">chrome://global/skin/</A>&quot; type=&quot;text/css&quot;?&gt;
++&lt;?xml-stylesheet href=&quot;<A HREF="chrome://specie/skin/">chrome://specie/skin/</A>&quot; type=&quot;text/css&quot;?&gt;
+ 
+ &lt;!DOCTYPE window SYSTEM &quot;<A HREF="chrome://specie/locale/specie.dtd">chrome://specie/locale/specie.dtd</A>&quot;&gt;
+ 
+-&lt;window title=&quot;&amp;specie.title;&quot;
+-  xmlns=&quot;<A HREF="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul</A>&quot;&gt;
++&lt;window id=&quot;window_specie&quot; title=&quot;&amp;window.specie.title;&quot; onload=&quot;&quot; onunload=&quot;&quot;
++  xmlns=&quot;<A HREF="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul</A>&quot;
++  persist=&quot;screenX screenY width height&quot;&gt;
+ 
+-  &lt;script type=&quot;application/x-javascript&quot; src=&quot;<A HREF="chrome://specie/content/specie.js">chrome://specie/content/specie.js</A>&quot;/&gt;
++  &lt;script type=&quot;application/x-javascript&quot; src=&quot;specie.js&quot;/&gt;
+ 
++  &lt;commandset id=&quot;commands&quot;&gt;
++    &lt;command id=&quot;cmd_quit&quot; oncommand=&quot;window.close();&quot;/&gt;
++    &lt;command id=&quot;cmd_chart&quot; oncommand=&quot;doDisplayPanel('chartOfAccounts');&quot;/&gt;
++    &lt;command id=&quot;cmd_journal&quot; oncommand=&quot;doDisplayPanel('journal');&quot;/&gt;
++  &lt;/commandset&gt;
++
++  &lt;keyset&gt;
++    &lt;key id=&quot;key_quit&quot; key=&quot;&amp;cmd.quit.key;&quot; modifiers=&quot;accel&quot; command=&quot;cmd_quit&quot;/&gt;
++  &lt;/keyset&gt;
++
+   &lt;toolbox&gt;
+-    &lt;menubar id=&quot;menubar&quot;&gt;
+-      &lt;menu label=&quot;&amp;menubar.file;&quot;&gt;
+-        &lt;menupopup&gt;
+-          &lt;menuitem label=&quot;&amp;menubar.file.new;&quot; oncommand=&quot;menuFileNew();&quot;/&gt;
+-          &lt;menuitem label=&quot;&amp;menubar.file.open;&quot; oncommand=&quot;menuFileOpen();&quot;/&gt;
+-          &lt;menuitem label=&quot;&amp;menubar.file.save;&quot; oncommand=&quot;menuFileSave();&quot;/&gt;
+-          &lt;menuseparator/&gt;
+-          &lt;menuitem label=&quot;&amp;menubar.file.exit;&quot; oncommand=&quot;menuFileExit();&quot;/&gt;
++    &lt;menubar&gt;
++      &lt;menu id=&quot;menu_file&quot; label=&quot;&amp;menu.file.label;&quot; accesskey=&quot;&amp;menu.file.accesskey;&quot;&gt;
++        &lt;menupopup id=&quot;menupopup_file&quot;&gt;
++          &lt;menuitem id=&quot;menuitem_quit&quot; label=&quot;&amp;menuitem.quit.label;&quot;
++            key=&quot;key_quit&quot; accesskey=&quot;&amp;menuitem.quit.accesskey;&quot;
++            command=&quot;cmd_quit&quot;/&gt;
+         &lt;/menupopup&gt;
+       &lt;/menu&gt;
+-      &lt;menu label=&quot;&amp;menubar.help;&quot;&gt;
+-        &lt;menupopup&gt;
+-          &lt;menuitem label=&quot;&amp;menubar.help.about;&quot; oncommand=&quot;menuHelpAbout();&quot;/&gt;
+-        &lt;/menupopup&gt;
+-      &lt;/menu&gt;
+     &lt;/menubar&gt;
+   &lt;/toolbox&gt;
+-  &lt;hbox flex=&quot;1&quot;&gt;
+-    &lt;vbox id=&quot;prefsCategories&quot; class=&quot;listBox buttonBox&quot;&gt;
+-      &lt;button orient=&quot;vertical&quot; class=&quot;buttonBoxButton&quot; type=&quot;radio&quot; group=&quot;navigation&quot; label=&quot;Placeholder 1&quot;/&gt;
+-      &lt;button orient=&quot;vertical&quot; class=&quot;buttonBoxButton&quot; type=&quot;radio&quot; group=&quot;navigation&quot; label=&quot;Placeholder 2&quot;/&gt;
++  &lt;hbox id=&quot;hbox_content&quot; flex=&quot;1&quot;&gt;
++    &lt;vbox id=&quot;vbox_navigation&quot;&gt;
++      &lt;button id=&quot;button_chartOfAccounts&quot; orient=&quot;vertical&quot; type=&quot;radio&quot; group=&quot;navigation&quot; label=&quot;&amp;button.chartOfAccounts.label;&quot; command=&quot;cmd_chart&quot;/&gt;
++      &lt;button id=&quot;button_journal&quot; orient=&quot;vertical&quot; type=&quot;radio&quot; group=&quot;navigation&quot; label=&quot;&amp;button.journal.label;&quot; command=&quot;cmd_journal&quot;/&gt;
+     &lt;/vbox&gt;
+     &lt;vbox flex=&quot;1&quot;&gt;
+-      &lt;iframe id=&quot;content-frame&quot; flex=&quot;1&quot;/&gt;
+-&lt;!--
+-      &lt;tree id=&quot;accounts-summary&quot; flex=&quot;1&quot;&gt;
+-        &lt;treecols&gt;
+-          &lt;treecol id=&quot;account&quot; label=&quot;&amp;accounts-summary.account;&quot; flex=&quot;2&quot; primary=&quot;true&quot;/&gt;
+-          &lt;treecol id=&quot;description&quot; label=&quot;&amp;accounts-summary.description;&quot; flex=&quot;3&quot;/&gt;
+-          &lt;treecol id=&quot;balance&quot; label=&quot;&amp;accounts-summary.balance;&quot; flex=&quot;1&quot;/&gt;
+-        &lt;/treecols&gt;
+-        &lt;treechildren&gt;
+-        &lt;/treechildren&gt;
+-      &lt;/tree&gt;
+---&gt;
++      &lt;iframe id=&quot;iframe_content&quot; flex=&quot;1&quot;/&gt;
+     &lt;/vbox&gt;
+   &lt;/hbox&gt;
+-  &lt;statusbar&gt;
+-    &lt;statusbarpanel id=&quot;status-text&quot; label=&quot;Testing&quot;/&gt;
+-  &lt;/statusbar&gt;
+ &lt;/window&gt;
+
+Modified: trunk/locale/en-US/specie/specie.dtd
+===================================================================
+--- trunk/locale/en-US/specie/specie.dtd	2005-03-21 03:32:52 UTC (rev 5)
++++ trunk/locale/en-US/specie/specie.dtd	2005-03-23 02:07:58 UTC (rev 6)
+@@ -34,19 +34,18 @@
+    -
+    - ***** END LICENSE BLOCK ***** --&gt;
+ 
+-&lt;!ENTITY specie.title &quot;Specie&quot;&gt;
+-&lt;!ENTITY menubar.file &quot;File&quot;&gt;
+-&lt;!ENTITY menubar.file.new &quot;New&quot;&gt;
+-&lt;!ENTITY menubar.file.open &quot;Open&quot;&gt;
+-&lt;!ENTITY menubar.file.save &quot;Save&quot;&gt;
+-&lt;!ENTITY menubar.file.exit &quot;Exit&quot;&gt;
+-&lt;!ENTITY menubar.help &quot;Help&quot;&gt;
+-&lt;!ENTITY menubar.help.about &quot;About&quot;&gt;
+-&lt;!ENTITY accounts-summary.account &quot;Account&quot;&gt;
+-&lt;!ENTITY accounts-summary.description &quot;Description&quot;&gt;
+-&lt;!ENTITY accounts-summary.balance &quot;Balance&quot;&gt;
+-&lt;!ENTITY accounts.asset &quot;Asset&quot;&gt;
+-&lt;!ENTITY accounts.liability &quot;Liability&quot;&gt;
+-&lt;!ENTITY accounts.equity &quot;Equity&quot;&gt;
+-&lt;!ENTITY accounts.income &quot;Income&quot;&gt;
+-&lt;!ENTITY accounts.expense &quot;Expense&quot;&gt;
++&lt;!ENTITY window.specie.title &quot;Specie&quot;&gt;
++
++&lt;!ENTITY cmd.quit.key &quot;Q&quot;&gt;
++
++&lt;!ENTITY menu.file.label &quot;File&quot;&gt;
++&lt;!ENTITY menu.file.accesskey &quot;f&quot;&gt;
++
++&lt;!ENTITY menuitem.quit.label &quot;Quit&quot;&gt;
++&lt;!ENTITY menuitem.quit.accesskey &quot;q&quot;&gt;
++
++&lt;!ENTITY button.chartOfAccounts.label &quot;Chart of Accounts&quot;&gt;
++&lt;!ENTITY button.journal.label &quot;Journal&quot;&gt;
++
++&lt;!ENTITY window.chartOfAccounts.title &quot;Chart Of Accounts&quot;&gt;
++&lt;!ENTITY window.journal.title &quot;Journal&quot;&gt;
+
+Modified: trunk/skin/specie/specie.css
+===================================================================
+--- trunk/skin/specie/specie.css	2005-03-21 03:32:52 UTC (rev 5)
++++ trunk/skin/specie/specie.css	2005-03-23 02:07:58 UTC (rev 6)
+@@ -36,6 +36,31 @@
+ 
+ /* $Id$ */
+ 
+-/* #accounts-summary {
+-	margin-right: 0;
+-} */
++#hbox_content {
++  padding: 10px;
++}
++
++#hbox_content vbox:first-child {
++  margin-right: 10px;
++}
++
++#vbox_navigation {
++  background-color: white;
++  border: 1px inset;
++}
++
++#vbox_navigation button {
++  margin-top: 5px;
++}
++
++#label_title {
++  background-color: RGB(0, 0, 95);
++  border: 1px inset;
++  color: white;
++  font-size: large;
++  font-weight: bold;
++  margin: 0;
++  margin-bottom: 10px;
++  padding: 5px;
++  padding-left: 10px;
++}
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000003.html">[Specie-svn] r5 - trunk/content/specie
+</A></li>
+	<LI>Next message: <A HREF="000005.html">[Specie-svn] r7 - in trunk: content/specie locale/en-US/specie skin/specie
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#4">[ date ]</a>
+              <a href="thread.html#4">[ thread ]</a>
+              <a href="subject.html#4">[ subject ]</a>
+              <a href="author.html#4">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/specie-svn">More information about the Specie-svn
+mailing list</a><br>
+</body></html>

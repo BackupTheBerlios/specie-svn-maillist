@@ -1,0 +1,278 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Specie-svn] r7 - in trunk: content/specie locale/en-US/specie skin/specie
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/specie-svn/2005-March/index.html" >
+   <LINK REL="made" HREF="mailto:specie-svn%40lists.berlios.de?Subject=Re%3A%20%5BSpecie-svn%5D%20r7%20-%20in%20trunk%3A%20content/specie%20locale/en-US/specie%20skin/specie&In-Reply-To=%3C200503240139.j2O1dBku025998%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000004.html">
+   <LINK REL="Next"  HREF="000006.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Specie-svn] r7 - in trunk: content/specie locale/en-US/specie skin/specie</H1>
+    <B>Todd Ross at BerliOS</B> 
+    <A HREF="mailto:specie-svn%40lists.berlios.de?Subject=Re%3A%20%5BSpecie-svn%5D%20r7%20-%20in%20trunk%3A%20content/specie%20locale/en-US/specie%20skin/specie&In-Reply-To=%3C200503240139.j2O1dBku025998%40sheep.berlios.de%3E"
+       TITLE="[Specie-svn] r7 - in trunk: content/specie locale/en-US/specie skin/specie">brainsick at sheep.berlios.de
+       </A><BR>
+    <I>Thu Mar 24 02:39:11 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000004.html">[Specie-svn] r6 - in trunk: content/specie locale/en-US/specie skin/specie
+</A></li>
+        <LI>Next message: <A HREF="000006.html">[Specie-svn] r8 - in trunk: content/specie locale/en-US/specie
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#5">[ date ]</a>
+              <a href="thread.html#5">[ thread ]</a>
+              <a href="subject.html#5">[ subject ]</a>
+              <a href="author.html#5">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: brainsick
+Date: 2005-03-24 02:38:38 +0100 (Thu, 24 Mar 2005)
+New Revision: 7
+
+Added:
+   trunk/locale/en-US/specie/specie.properties
+Modified:
+   trunk/content/specie/chartOfAccountsPanel.xul
+   trunk/content/specie/specie.js
+   trunk/content/specie/specie.xul
+   trunk/locale/en-US/specie/specie.dtd
+   trunk/skin/specie/specie.css
+Log:
+chartOfAccounts tree stub, file open stub, properties
+
+Modified: trunk/content/specie/chartOfAccountsPanel.xul
+===================================================================
+--- trunk/content/specie/chartOfAccountsPanel.xul	2005-03-23 02:07:58 UTC (rev 6)
++++ trunk/content/specie/chartOfAccountsPanel.xul	2005-03-24 01:38:38 UTC (rev 7)
+@@ -49,6 +49,13 @@
+   &lt;!-- script type=&quot;application/x-javascript&quot; src=&quot;chartOfAccounts.js&quot;/ --&gt;
+ 
+   &lt;label id=&quot;label_title&quot; value=&quot;&amp;window.chartOfAccounts.title;&quot;/&gt;
+-  &lt;hbox flex=&quot;1&quot;&gt;
+-  &lt;/hbox&gt;
++  &lt;tree id=&quot;tree_summary&quot; flex=&quot;1&quot;&gt;
++    &lt;treecols&gt;
++      &lt;treecol id=&quot;treecol_account&quot; label=&quot;&amp;treecol.account.label;&quot; flex=&quot;2&quot; primary=&quot;true&quot;/&gt;
++      &lt;treecol id=&quot;treecol_description&quot; label=&quot;&amp;treecol.description.label;&quot; flex=&quot;3&quot;/&gt;
++      &lt;treecol id=&quot;treecol_balance&quot; label=&quot;&amp;treecol.balance.label;&quot; flex=&quot;1&quot;/&gt;
++    &lt;/treecols&gt;
++    &lt;treechildren id=&quot;treechildren_summary&quot;&gt;
++    &lt;/treechildren&gt;
++  &lt;/tree&gt;
+ &lt;/window&gt;
+
+Modified: trunk/content/specie/specie.js
+===================================================================
+--- trunk/content/specie/specie.js	2005-03-23 02:07:58 UTC (rev 6)
++++ trunk/content/specie/specie.js	2005-03-24 01:38:38 UTC (rev 7)
+@@ -40,3 +40,34 @@
+   var contentFrame = document.getElementById(&quot;iframe_content&quot;);
+   contentFrame.setAttribute(&quot;src&quot;, which + &quot;Panel.xul&quot;);
+ }
++
++function doFileOpen(options) {
++  var strbundle = document.getElementById(&quot;stringbundle_specie&quot;);
++  var filename = &quot;&quot;;
++
++  if (options &amp;&amp; options.filename) {
++    filename = options.filename;
++  } else {
++    var nsIFilePicker = Components.interfaces.nsIFilePicker;
++    var fp = Components.classes[&quot;@mozilla.org/filepicker;1&quot;].createInstance(nsIFilePicker);
++
++    fp.init(window, strbundle.getString(&quot;filepicker.open.title&quot;), nsIFilePicker.modeOpen);
++    fp.appendFilter(&quot;Specie Files&quot;, &quot;*.spc&quot;);
++
++    var res = fp.show();
++    if (res == nsIFilePicker.returnOK) {
++      filename = fp.file;
++    } else {
++      return;
++    }
++  }
++
++  var nsILocalFile = Components.interfaces.nsILocalFile;
++  var file = Components.classes[&quot;@mozilla.org/file/local;1&quot;].createInstance(nsILocalFile);
++
++  file.initWithPath(filename);
++  if (!file.exists()) {
++    alert(&quot;filename: &quot; + filename);
++    alert(strbundle.getFormattedString(&quot;file.exists.not&quot;, [filename]));
++  }
++}
+
+Modified: trunk/content/specie/specie.xul
+===================================================================
+--- trunk/content/specie/specie.xul	2005-03-23 02:07:58 UTC (rev 6)
++++ trunk/content/specie/specie.xul	2005-03-24 01:38:38 UTC (rev 7)
+@@ -47,15 +47,21 @@
+   xmlns=&quot;<A HREF="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul</A>&quot;
+   persist=&quot;screenX screenY width height&quot;&gt;
+ 
++  &lt;stringbundleset&gt;
++    &lt;stringbundle id=&quot;stringbundle_specie&quot; src=&quot;<A HREF="chrome://specie/locale/specie.properties">chrome://specie/locale/specie.properties</A>&quot;/&gt;
++  &lt;/stringbundleset&gt;
++
+   &lt;script type=&quot;application/x-javascript&quot; src=&quot;specie.js&quot;/&gt;
+ 
+   &lt;commandset id=&quot;commands&quot;&gt;
++    &lt;command id=&quot;cmd_open&quot; oncommand=&quot;doFileOpen();&quot;/&gt;
+     &lt;command id=&quot;cmd_quit&quot; oncommand=&quot;window.close();&quot;/&gt;
+     &lt;command id=&quot;cmd_chart&quot; oncommand=&quot;doDisplayPanel('chartOfAccounts');&quot;/&gt;
+     &lt;command id=&quot;cmd_journal&quot; oncommand=&quot;doDisplayPanel('journal');&quot;/&gt;
+   &lt;/commandset&gt;
+ 
+   &lt;keyset&gt;
++    &lt;key id=&quot;key_open&quot; key=&quot;&amp;cmd.open.key;&quot; modifiers=&quot;accel&quot; command=&quot;cmd_open&quot;/&gt;
+     &lt;key id=&quot;key_quit&quot; key=&quot;&amp;cmd.quit.key;&quot; modifiers=&quot;accel&quot; command=&quot;cmd_quit&quot;/&gt;
+   &lt;/keyset&gt;
+ 
+@@ -63,6 +69,10 @@
+     &lt;menubar&gt;
+       &lt;menu id=&quot;menu_file&quot; label=&quot;&amp;menu.file.label;&quot; accesskey=&quot;&amp;menu.file.accesskey;&quot;&gt;
+         &lt;menupopup id=&quot;menupopup_file&quot;&gt;
++          &lt;menuitem id=&quot;menuitem_open&quot; label=&quot;&amp;menuitem.open.label;&quot;
++            key=&quot;key_open&quot; accesskey=&quot;&amp;menuitem.open.accesskey;&quot;
++            command=&quot;cmd_open&quot;/&gt;
++          &lt;menuseparator/&gt;
+           &lt;menuitem id=&quot;menuitem_quit&quot; label=&quot;&amp;menuitem.quit.label;&quot;
+             key=&quot;key_quit&quot; accesskey=&quot;&amp;menuitem.quit.accesskey;&quot;
+             command=&quot;cmd_quit&quot;/&gt;
+
+Modified: trunk/locale/en-US/specie/specie.dtd
+===================================================================
+--- trunk/locale/en-US/specie/specie.dtd	2005-03-23 02:07:58 UTC (rev 6)
++++ trunk/locale/en-US/specie/specie.dtd	2005-03-24 01:38:38 UTC (rev 7)
+@@ -37,10 +37,13 @@
+ &lt;!ENTITY window.specie.title &quot;Specie&quot;&gt;
+ 
+ &lt;!ENTITY cmd.quit.key &quot;Q&quot;&gt;
++&lt;!ENTITY cmd.open.key &quot;O&quot;&gt;
+ 
+ &lt;!ENTITY menu.file.label &quot;File&quot;&gt;
+ &lt;!ENTITY menu.file.accesskey &quot;f&quot;&gt;
+ 
++&lt;!ENTITY menuitem.open.label &quot;Open&quot;&gt;
++&lt;!ENTITY menuitem.open.accesskey &quot;o&quot;&gt;
+ &lt;!ENTITY menuitem.quit.label &quot;Quit&quot;&gt;
+ &lt;!ENTITY menuitem.quit.accesskey &quot;q&quot;&gt;
+ 
+@@ -49,3 +52,7 @@
+ 
+ &lt;!ENTITY window.chartOfAccounts.title &quot;Chart Of Accounts&quot;&gt;
+ &lt;!ENTITY window.journal.title &quot;Journal&quot;&gt;
++
++&lt;!ENTITY treecol.account.label &quot;Account&quot;&gt;
++&lt;!ENTITY treecol.description.label &quot;Description&quot;&gt;
++&lt;!ENTITY treecol.balance.label &quot;Balance&quot;&gt;
+
+Added: trunk/locale/en-US/specie/specie.properties
+===================================================================
+--- trunk/locale/en-US/specie/specie.properties	2005-03-23 02:07:58 UTC (rev 6)
++++ trunk/locale/en-US/specie/specie.properties	2005-03-24 01:38:38 UTC (rev 7)
+@@ -0,0 +1,38 @@
++# ***** BEGIN LICENSE BLOCK *****
++# Version: MPL 1.1/GPL 2.0/LGPL 2.1
++#
++# The contents of this file are subject to the Mozilla Public License Version
++# 1.1 (the &quot;License&quot;); you may not use this file except in compliance with
++# the License. You may obtain a copy of the License at
++# <A HREF="http://www.mozilla.org/MPL/">http://www.mozilla.org/MPL/</A>
++#
++# Software distributed under the License is distributed on an &quot;AS IS&quot; basis,
++# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
++# for the specific language governing rights and limitations under the
++# License.
++#
++# The Original Code is Specie User Interface.
++#
++# The Initial Developer of the Original Code is
++# Todd Ross.
++# Portions created by the Initial Developer are Copyright (C) 2005
++# the Initial Developer. All Rights Reserved.
++#
++# Contributor(s):
++#
++# Alternatively, the contents of this file may be used under the terms of
++# either the GNU General Public License Version 2 or later (the &quot;GPL&quot;), or
++# the GNU Lesser General Public License Version 2.1 or later (the &quot;LGPL&quot;),
++# in which case the provisions of the GPL or the LGPL are applicable instead
++# of those above. If you wish to allow use of your version of this file only
++# under the terms of either the GPL or the LGPL, and not to allow others to
++# use your version of this file under the terms of the MPL, indicate your
++# decision by deleting the provisions above and replace them with the notice
++# and other provisions required by the LGPL or the GPL. If you do not delete
++# the provisions above, a recipient may use your version of this file under
++# the terms of any one of the MPL, the GPL or the LGPL.
++#
++# ***** END LICENSE BLOCK *****
++
++file.exists.not = File %s doesn't exist
++filepicker.open.title = File Open
+
+Modified: trunk/skin/specie/specie.css
+===================================================================
+--- trunk/skin/specie/specie.css	2005-03-23 02:07:58 UTC (rev 6)
++++ trunk/skin/specie/specie.css	2005-03-24 01:38:38 UTC (rev 7)
+@@ -46,7 +46,7 @@
+ 
+ #vbox_navigation {
+   background-color: white;
+-  border: 1px inset;
++  border: thin inset;
+ }
+ 
+ #vbox_navigation button {
+@@ -55,7 +55,7 @@
+ 
+ #label_title {
+   background-color: RGB(0, 0, 95);
+-  border: 1px inset;
++  border: thin inset;
+   color: white;
+   font-size: large;
+   font-weight: bold;
+@@ -64,3 +64,8 @@
+   padding: 5px;
+   padding-left: 10px;
+ }
++
++/* should probably be moved to chartOfAccountsPanel.css */
++#tree_summary {
++  margin: 0;
++}
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000004.html">[Specie-svn] r6 - in trunk: content/specie locale/en-US/specie skin/specie
+</A></li>
+	<LI>Next message: <A HREF="000006.html">[Specie-svn] r8 - in trunk: content/specie locale/en-US/specie
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#5">[ date ]</a>
+              <a href="thread.html#5">[ thread ]</a>
+              <a href="subject.html#5">[ subject ]</a>
+              <a href="author.html#5">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/specie-svn">More information about the Specie-svn
+mailing list</a><br>
+</body></html>

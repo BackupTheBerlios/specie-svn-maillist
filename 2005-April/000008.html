@@ -1,0 +1,160 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Specie-svn] r10 - in trunk: . chrome chrome/content chrome/locale chrome/skin defaults defaults/preferences
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/specie-svn/2005-April/index.html" >
+   <LINK REL="made" HREF="mailto:specie-svn%40lists.berlios.de?Subject=Re%3A%20%5BSpecie-svn%5D%20r10%20-%20in%20trunk%3A%20.%20chrome%20chrome/content%20chrome/locale%20chrome/skin%20defaults%20defaults/preferences&In-Reply-To=%3C200504262349.j3QNn9po031802%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000007.html">
+   <LINK REL="Next"  HREF="000009.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Specie-svn] r10 - in trunk: . chrome chrome/content chrome/locale chrome/skin defaults defaults/preferences</H1>
+    <B>Todd Ross at BerliOS</B> 
+    <A HREF="mailto:specie-svn%40lists.berlios.de?Subject=Re%3A%20%5BSpecie-svn%5D%20r10%20-%20in%20trunk%3A%20.%20chrome%20chrome/content%20chrome/locale%20chrome/skin%20defaults%20defaults/preferences&In-Reply-To=%3C200504262349.j3QNn9po031802%40sheep.berlios.de%3E"
+       TITLE="[Specie-svn] r10 - in trunk: . chrome chrome/content chrome/locale chrome/skin defaults defaults/preferences">brainsick at sheep.berlios.de
+       </A><BR>
+    <I>Wed Apr 27 01:49:09 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000007.html">[Specie-svn] r9 - trunk/content/specie
+</A></li>
+        <LI>Next message: <A HREF="000009.html">[Specie-svn] r11 - in trunk/chrome: content/specie locale/en-US/specie skin/specie
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#8">[ date ]</a>
+              <a href="thread.html#8">[ thread ]</a>
+              <a href="subject.html#8">[ subject ]</a>
+              <a href="author.html#8">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: brainsick
+Date: 2005-04-27 01:48:45 +0200 (Wed, 27 Apr 2005)
+New Revision: 10
+
+Added:
+   trunk/application.ini
+   trunk/chrome/
+   trunk/chrome/chrome.manifest
+   trunk/chrome/content/
+   trunk/chrome/content/specie/
+   trunk/chrome/locale/
+   trunk/chrome/locale/en-US/
+   trunk/chrome/skin/
+   trunk/chrome/skin/specie/
+   trunk/defaults/
+   trunk/defaults/preferences/
+   trunk/defaults/preferences/specie-prefs.js
+Removed:
+   trunk/chrome/content/specie/
+   trunk/chrome/locale/en-US/
+   trunk/chrome/skin/specie/
+   trunk/content/
+   trunk/locale/
+   trunk/skin/
+Log:
+XULRunner-ize
+
+Added: trunk/application.ini
+===================================================================
+--- trunk/application.ini	2005-04-26 23:39:19 UTC (rev 9)
++++ trunk/application.ini	2005-04-26 23:48:45 UTC (rev 10)
+@@ -0,0 +1,37 @@
++[App]
++;
++; This field specifies your organization's name.  This field is recommended,
++; but optional.
++;Vendor=MozillaTest
++;
++; This field specifies your application's name.  This field is required.
++Name=Specie
++;
++; This field specifies your application's version.  This field is optional.
++Version=0.1
++;
++; This field specifies your application's build ID (timestamp).  This field is
++; required.
++BuildID=2005042601
++;
++; This field specifies a compact copyright notice for your application.  This
++; field is optional.
++Copyright=Copyright (c) 2005 Todd Ross
++;
++; This ID is just an example.  Every XUL app ought to have it's own unique ID.
++; You can use the microsoft &quot;guidgen&quot; or &quot;uuidgen&quot; tools, or go on
++; irc.mozilla.org and /msg botbot uuid.  This field is optional.
++ID={125032bc-bae6-49d6-8c4e-c90d77655dc0}
++
++[Gecko]
++;
++; This field is required.  It specifies the minimum Gecko version that this
++; application requires.  Specifying 1.8 matches all releases with a version
++; prefixed by 1.8 (e.g., 1.8a4, 1.8b, 1.8.2).
++MinVersion=1.8
++;
++; This field is optional.  It specifies the maximum Gecko version that this
++; application requires.  It should be specified if your application uses
++; unfrozen interfaces.  Specifying 1.8 matches all releases with a version
++; prefixed by 1.8 (e.g., 1.8a4, 1.8b, 1.8.2).
++MaxVersion=1.8
+
+Added: trunk/chrome/chrome.manifest
+===================================================================
+--- trunk/chrome/chrome.manifest	2005-04-26 23:39:19 UTC (rev 9)
++++ trunk/chrome/chrome.manifest	2005-04-26 23:48:45 UTC (rev 10)
+@@ -0,0 +1,3 @@
++content specie content/specie/
++skin specie classic skin/specie/
++locale specie en-US locale/en-US/specie/
+
+Copied: trunk/chrome/content (from rev 2, trunk/content)
+
+Copied: trunk/chrome/content/specie (from rev 9, trunk/content/specie)
+
+Copied: trunk/chrome/locale (from rev 2, trunk/locale)
+
+Copied: trunk/chrome/locale/en-US (from rev 9, trunk/locale/en-US)
+
+Copied: trunk/chrome/skin (from rev 2, trunk/skin)
+
+Copied: trunk/chrome/skin/specie (from rev 9, trunk/skin/specie)
+
+Added: trunk/defaults/preferences/specie-prefs.js
+===================================================================
+--- trunk/defaults/preferences/specie-prefs.js	2005-04-26 23:39:19 UTC (rev 9)
++++ trunk/defaults/preferences/specie-prefs.js	2005-04-26 23:48:45 UTC (rev 10)
+@@ -0,0 +1,2 @@
++pref(&quot;toolkit.defaultChromeURI&quot;, &quot;<A HREF="chrome://specie/content/specie.xul">chrome://specie/content/specie.xul</A>&quot;);
++pref(&quot;general.useragent.extra.specie&quot;, &quot;Specie/0.1&quot;);
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000007.html">[Specie-svn] r9 - trunk/content/specie
+</A></li>
+	<LI>Next message: <A HREF="000009.html">[Specie-svn] r11 - in trunk/chrome: content/specie locale/en-US/specie skin/specie
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#8">[ date ]</a>
+              <a href="thread.html#8">[ thread ]</a>
+              <a href="subject.html#8">[ subject ]</a>
+              <a href="author.html#8">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/specie-svn">More information about the Specie-svn
+mailing list</a><br>
+</body></html>

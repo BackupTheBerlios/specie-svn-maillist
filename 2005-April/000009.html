@@ -1,0 +1,150 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Specie-svn] r11 - in trunk/chrome: content/specie locale/en-US/specie skin/specie
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/specie-svn/2005-April/index.html" >
+   <LINK REL="made" HREF="mailto:specie-svn%40lists.berlios.de?Subject=Re%3A%20%5BSpecie-svn%5D%20r11%20-%20in%20trunk/chrome%3A%20content/specie%20locale/en-US/specie%20skin/specie&In-Reply-To=%3C200504262353.j3QNrvap000669%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000008.html">
+   <LINK REL="Next"  HREF="000010.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Specie-svn] r11 - in trunk/chrome: content/specie locale/en-US/specie skin/specie</H1>
+    <B>Todd Ross at BerliOS</B> 
+    <A HREF="mailto:specie-svn%40lists.berlios.de?Subject=Re%3A%20%5BSpecie-svn%5D%20r11%20-%20in%20trunk/chrome%3A%20content/specie%20locale/en-US/specie%20skin/specie&In-Reply-To=%3C200504262353.j3QNrvap000669%40sheep.berlios.de%3E"
+       TITLE="[Specie-svn] r11 - in trunk/chrome: content/specie locale/en-US/specie skin/specie">brainsick at sheep.berlios.de
+       </A><BR>
+    <I>Wed Apr 27 01:53:57 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000008.html">[Specie-svn] r10 - in trunk: . chrome chrome/content chrome/locale chrome/skin defaults defaults/preferences
+</A></li>
+        <LI>Next message: <A HREF="000010.html">[Specie-svn] r12 - trunk/defaults/preferences
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#9">[ date ]</a>
+              <a href="thread.html#9">[ thread ]</a>
+              <a href="subject.html#9">[ subject ]</a>
+              <a href="author.html#9">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: brainsick
+Date: 2005-04-27 01:53:33 +0200 (Wed, 27 Apr 2005)
+New Revision: 11
+
+Removed:
+   trunk/chrome/content/specie/contents.rdf
+   trunk/chrome/locale/en-US/specie/contents.rdf
+   trunk/chrome/skin/specie/contents.rdf
+Log:
+XULRunner-ize (obsolete contents.rdf)
+
+Deleted: trunk/chrome/content/specie/contents.rdf
+===================================================================
+--- trunk/chrome/content/specie/contents.rdf	2005-04-26 23:48:45 UTC (rev 10)
++++ trunk/chrome/content/specie/contents.rdf	2005-04-26 23:53:33 UTC (rev 11)
+@@ -1,20 +0,0 @@
+-&lt;?xml version=&quot;1.0&quot;?&gt; 
+-
+-&lt;RDF:RDF xmlns:RDF=&quot;<A HREF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">http://www.w3.org/1999/02/22-rdf-syntax-ns#</A>&quot; 
+-	xmlns:chrome=&quot;<A HREF="http://www.mozilla.org/rdf/chrome#">http://www.mozilla.org/rdf/chrome#</A>&quot;&gt; 
+-
+-	&lt;RDF:Seq about=&quot;urn:mozilla:package:root&quot;&gt; 
+-		&lt;RDF:li resource=&quot;urn:mozilla:package:specie&quot;/&gt; 
+-	&lt;/RDF:Seq&gt; 
+-
+-	&lt;RDF:Description about=&quot;urn:mozilla:package:specie&quot; 
+-		chrome:displayName=&quot;specie&quot;
+-		chrome:author=&quot;Todd Ross (<A HREF="https://lists.berlios.de/mailman/listinfo/specie-svn">specie at brainsick.com</A>)&quot; 
+-		chrome:authorURL=&quot;<A HREF="http://developer.berlios.de/projects/specie">http://developer.berlios.de/projects/specie</A>&quot;
+-		chrome:name=&quot;specie&quot;
+-		chrome:extension=&quot;true&quot;
+-		chrome:settingsURL=&quot;<A HREF="chrome://specie/content/prefs.xul">chrome://specie/content/prefs.xul</A>&quot;
+-		chrome:description=&quot;Specie&quot;&gt; 
+-	&lt;/RDF:Description&gt;
+-
+-&lt;/RDF:RDF&gt;
+
+Deleted: trunk/chrome/locale/en-US/specie/contents.rdf
+===================================================================
+--- trunk/chrome/locale/en-US/specie/contents.rdf	2005-04-26 23:48:45 UTC (rev 10)
++++ trunk/chrome/locale/en-US/specie/contents.rdf	2005-04-26 23:53:33 UTC (rev 11)
+@@ -1,22 +0,0 @@
+-&lt;?xml version=&quot;1.0&quot;?&gt;
+-
+-&lt;RDF:RDF xmlns:RDF=&quot;<A HREF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">http://www.w3.org/1999/02/22-rdf-syntax-ns#</A>&quot;
+-	xmlns:chrome=&quot;<A HREF="http://www.mozilla.org/rdf/chrome#">http://www.mozilla.org/rdf/chrome#</A>&quot;&gt;
+-
+-	&lt;RDF:Seq about=&quot;urn:mozilla:locale:root&quot;&gt;
+-		&lt;RDF:li resource=&quot;urn:mozilla:locale:en-US&quot;/&gt;
+-	&lt;/RDF:Seq&gt;
+-
+-	&lt;RDF:Description about=&quot;urn:mozilla:locale:en-US&quot;
+-		chrome:author=&quot;Todd Ross (<A HREF="https://lists.berlios.de/mailman/listinfo/specie-svn">specie at brainsick.com</A>)&quot;
+-		chrome:displayName=&quot;English/United States [en-us]&quot;
+-		chrome:name=&quot;en-US&quot;&gt;
+-
+-		&lt;chrome:packages&gt;
+-			&lt;RDF:Seq about=&quot;urn:mozilla:locale:en-US:packages&quot;&gt;
+-				&lt;RDF:li resource=&quot;urn:mozilla:locale:en-US:specie&quot;/&gt;
+-			&lt;/RDF:Seq&gt;
+-		&lt;/chrome:packages&gt;
+-	&lt;/RDF:Description&gt;
+-
+-&lt;/RDF:RDF&gt;
+
+Deleted: trunk/chrome/skin/specie/contents.rdf
+===================================================================
+--- trunk/chrome/skin/specie/contents.rdf	2005-04-26 23:48:45 UTC (rev 10)
++++ trunk/chrome/skin/specie/contents.rdf	2005-04-26 23:53:33 UTC (rev 11)
+@@ -1,18 +0,0 @@
+-&lt;?xml version=&quot;1.0&quot;?&gt;
+-
+-&lt;RDF:RDF xmlns:RDF=&quot;<A HREF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">http://www.w3.org/1999/02/22-rdf-syntax-ns#</A>&quot;
+-	xmlns:chrome=&quot;<A HREF="http://www.mozilla.org/rdf/chrome#">http://www.mozilla.org/rdf/chrome#</A>&quot;&gt;
+-
+-	&lt;RDF:Seq about=&quot;urn:mozilla:skin:root&quot;&gt;
+-		&lt;RDF:li resource=&quot;urn:mozilla:skin:classic/1.0&quot;/&gt;
+-	&lt;/RDF:Seq&gt;
+-
+-	&lt;RDF:Description about=&quot;urn:mozilla:skin:classic/1.0&quot;&gt;
+-		&lt;chrome:packages&gt;
+-			&lt;RDF:Seq about=&quot;urn:mozilla:skin:classic/1.0:packages&quot;&gt;
+-				&lt;RDF:li resource=&quot;urn:mozilla:skin:classic/1.0:specie&quot;/&gt;
+-			&lt;/RDF:Seq&gt;
+-		&lt;/chrome:packages&gt;
+-	&lt;/RDF:Description&gt;
+-
+-&lt;/RDF:RDF&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000008.html">[Specie-svn] r10 - in trunk: . chrome chrome/content chrome/locale chrome/skin defaults defaults/preferences
+</A></li>
+	<LI>Next message: <A HREF="000010.html">[Specie-svn] r12 - trunk/defaults/preferences
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#9">[ date ]</a>
+              <a href="thread.html#9">[ thread ]</a>
+              <a href="subject.html#9">[ subject ]</a>
+              <a href="author.html#9">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/specie-svn">More information about the Specie-svn
+mailing list</a><br>
+</body></html>

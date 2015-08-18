@@ -1,0 +1,354 @@
+From brainsick at sheep.berlios.de  Wed Apr 27 01:39:36 2005
+From: brainsick at sheep.berlios.de (Todd Ross at BerliOS)
+Date: Wed, 27 Apr 2005 01:39:36 +0200
+Subject: [Specie-svn] r9 - trunk/content/specie
+Message-ID: <200504262339.j3QNdajV030018@sheep.berlios.de>
+
+Author: brainsick
+Date: 2005-04-27 01:39:19 +0200 (Wed, 27 Apr 2005)
+New Revision: 9
+
+Modified:
+   trunk/content/specie/chartOfAccountsPanel.xul
+   trunk/content/specie/journalPanel.xul
+   trunk/content/specie/specie.js
+   trunk/content/specie/specie.xul
+Log:
+File/New stub, broadcasters/observers
+
+Modified: trunk/content/specie/chartOfAccountsPanel.xul
+===================================================================
+--- trunk/content/specie/chartOfAccountsPanel.xul	2005-03-24 02:24:10 UTC (rev 8)
++++ trunk/content/specie/chartOfAccountsPanel.xul	2005-04-26 23:39:19 UTC (rev 9)
+@@ -41,7 +41,10 @@
+ <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+ <?xml-stylesheet href="chrome://specie/skin/" type="text/css"?>
+ 
+-<!DOCTYPE window SYSTEM "chrome://specie/locale/">
++<!DOCTYPE window [
++  <!ENTITY % specie.dtd SYSTEM "chrome://specie/locale/specie.dtd">
++  %specie.dtd;
++]>
+ 
+ <window id="window_chartOfAccounts" title="&window.chartOfAccounts.title;"
+   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+Modified: trunk/content/specie/journalPanel.xul
+===================================================================
+--- trunk/content/specie/journalPanel.xul	2005-03-24 02:24:10 UTC (rev 8)
++++ trunk/content/specie/journalPanel.xul	2005-04-26 23:39:19 UTC (rev 9)
+@@ -41,7 +41,10 @@
+ <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+ <?xml-stylesheet href="chrome://specie/skin/" type="text/css"?>
+ 
+-<!DOCTYPE window SYSTEM "chrome://specie/locale/">
++<!DOCTYPE window [
++  <!ENTITY % specie.dtd SYSTEM "chrome://specie/locale/specie.dtd">
++  %specie.dtd;
++]>
+ 
+ <window id="window_journal" title="&window.journal.title;"
+   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+Modified: trunk/content/specie/specie.js
+===================================================================
+--- trunk/content/specie/specie.js	2005-03-24 02:24:10 UTC (rev 8)
++++ trunk/content/specie/specie.js	2005-04-26 23:39:19 UTC (rev 9)
+@@ -42,7 +42,8 @@
+ }
+ 
+ function doNew() {
+-  
++  var fileLoaded = document.getElementById("fileLoaded");
++  fileLoaded.removeAttribute("disabled");
+ }
+ 
+ function doFileOpen(options) {
+@@ -74,4 +75,7 @@
+     alert("filename: " + filename);
+     alert(strbundle.getFormattedString("file.exists.not", [filename]));
+   }
++
++  var fileLoaded = document.getElementById("fileLoaded");
++  fileLoaded.removeAttribute("disabled");
+ }
+
+Modified: trunk/content/specie/specie.xul
+===================================================================
+--- trunk/content/specie/specie.xul	2005-03-24 02:24:10 UTC (rev 8)
++++ trunk/content/specie/specie.xul	2005-04-26 23:39:19 UTC (rev 9)
+@@ -41,7 +41,10 @@
+ <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+ <?xml-stylesheet href="chrome://specie/skin/" type="text/css"?>
+ 
+-<!DOCTYPE window SYSTEM "chrome://specie/locale/specie.dtd">
++<!DOCTYPE window [
++  <!ENTITY % specie.dtd SYSTEM "chrome://specie/locale/specie.dtd">
++  %specie.dtd;
++]>
+ 
+ <window id="window_specie" title="&window.specie.title;" onload="" onunload=""
+   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+@@ -54,7 +57,7 @@
+   <script type="application/x-javascript" src="specie.js"/>
+ 
+   <commandset id="commands">
+-    <command id="cmd_new" oncommand="doFileNew();"/>
++    <command id="cmd_new" oncommand="doNew();"/>
+     <command id="cmd_open" oncommand="doFileOpen();"/>
+     <command id="cmd_quit" oncommand="window.close();"/>
+     <command id="cmd_chart" oncommand="doDisplayPanel('chartOfAccounts');"/>
+@@ -67,6 +70,10 @@
+     <key id="key_quit" key="&cmd.quit.key;" modifiers="accel" command="cmd_quit"/>
+   </keyset>
+ 
++  <broadcasterset>
++    <broadcaster id="fileLoaded" disabled="true"/>
++  </broadcasterset>
++
+   <toolbox>
+     <menubar>
+       <menu id="menu_file" label="&menu.file.label;" accesskey="&menu.file.accesskey;">
+@@ -87,8 +94,8 @@
+   </toolbox>
+   <hbox id="hbox_content" flex="1">
+     <vbox id="vbox_navigation">
+-      <button id="button_chartOfAccounts" orient="vertical" type="radio" group="navigation" label="&button.chartOfAccounts.label;" command="cmd_chart"/>
+-      <button id="button_journal" orient="vertical" type="radio" group="navigation" label="&button.journal.label;" command="cmd_journal"/>
++      <button id="button_chartOfAccounts" orient="vertical" type="radio" group="navigation" label="&button.chartOfAccounts.label;" command="cmd_chart" observes="fileLoaded"/>
++      <button id="button_journal" orient="vertical" type="radio" group="navigation" label="&button.journal.label;" command="cmd_journal" observes="fileLoaded"/>
+     </vbox>
+     <vbox flex="1">
+       <iframe id="iframe_content" flex="1"/>
+
+
+
+From brainsick at sheep.berlios.de  Wed Apr 27 01:49:09 2005
+From: brainsick at sheep.berlios.de (Todd Ross at BerliOS)
+Date: Wed, 27 Apr 2005 01:49:09 +0200
+Subject: [Specie-svn] r10 - in trunk: . chrome chrome/content chrome/locale chrome/skin defaults defaults/preferences
+Message-ID: <200504262349.j3QNn9po031802@sheep.berlios.de>
+
+Author: brainsick
+Date: 2005-04-27 01:48:45 +0200 (Wed, 27 Apr 2005)
+New Revision: 10
+
+Added:
+   trunk/application.ini
+   trunk/chrome/
+   trunk/chrome/chrome.manifest
+   trunk/chrome/content/
+   trunk/chrome/content/specie/
+   trunk/chrome/locale/
+   trunk/chrome/locale/en-US/
+   trunk/chrome/skin/
+   trunk/chrome/skin/specie/
+   trunk/defaults/
+   trunk/defaults/preferences/
+   trunk/defaults/preferences/specie-prefs.js
+Removed:
+   trunk/chrome/content/specie/
+   trunk/chrome/locale/en-US/
+   trunk/chrome/skin/specie/
+   trunk/content/
+   trunk/locale/
+   trunk/skin/
+Log:
+XULRunner-ize
+
+Added: trunk/application.ini
+===================================================================
+--- trunk/application.ini	2005-04-26 23:39:19 UTC (rev 9)
++++ trunk/application.ini	2005-04-26 23:48:45 UTC (rev 10)
+@@ -0,0 +1,37 @@
++[App]
++;
++; This field specifies your organization's name.  This field is recommended,
++; but optional.
++;Vendor=MozillaTest
++;
++; This field specifies your application's name.  This field is required.
++Name=Specie
++;
++; This field specifies your application's version.  This field is optional.
++Version=0.1
++;
++; This field specifies your application's build ID (timestamp).  This field is
++; required.
++BuildID=2005042601
++;
++; This field specifies a compact copyright notice for your application.  This
++; field is optional.
++Copyright=Copyright (c) 2005 Todd Ross
++;
++; This ID is just an example.  Every XUL app ought to have it's own unique ID.
++; You can use the microsoft "guidgen" or "uuidgen" tools, or go on
++; irc.mozilla.org and /msg botbot uuid.  This field is optional.
++ID={125032bc-bae6-49d6-8c4e-c90d77655dc0}
++
++[Gecko]
++;
++; This field is required.  It specifies the minimum Gecko version that this
++; application requires.  Specifying 1.8 matches all releases with a version
++; prefixed by 1.8 (e.g., 1.8a4, 1.8b, 1.8.2).
++MinVersion=1.8
++;
++; This field is optional.  It specifies the maximum Gecko version that this
++; application requires.  It should be specified if your application uses
++; unfrozen interfaces.  Specifying 1.8 matches all releases with a version
++; prefixed by 1.8 (e.g., 1.8a4, 1.8b, 1.8.2).
++MaxVersion=1.8
+
+Added: trunk/chrome/chrome.manifest
+===================================================================
+--- trunk/chrome/chrome.manifest	2005-04-26 23:39:19 UTC (rev 9)
++++ trunk/chrome/chrome.manifest	2005-04-26 23:48:45 UTC (rev 10)
+@@ -0,0 +1,3 @@
++content specie content/specie/
++skin specie classic skin/specie/
++locale specie en-US locale/en-US/specie/
+
+Copied: trunk/chrome/content (from rev 2, trunk/content)
+
+Copied: trunk/chrome/content/specie (from rev 9, trunk/content/specie)
+
+Copied: trunk/chrome/locale (from rev 2, trunk/locale)
+
+Copied: trunk/chrome/locale/en-US (from rev 9, trunk/locale/en-US)
+
+Copied: trunk/chrome/skin (from rev 2, trunk/skin)
+
+Copied: trunk/chrome/skin/specie (from rev 9, trunk/skin/specie)
+
+Added: trunk/defaults/preferences/specie-prefs.js
+===================================================================
+--- trunk/defaults/preferences/specie-prefs.js	2005-04-26 23:39:19 UTC (rev 9)
++++ trunk/defaults/preferences/specie-prefs.js	2005-04-26 23:48:45 UTC (rev 10)
+@@ -0,0 +1,2 @@
++pref("toolkit.defaultChromeURI", "chrome://specie/content/specie.xul");
++pref("general.useragent.extra.specie", "Specie/0.1");
+
+
+
+From brainsick at sheep.berlios.de  Wed Apr 27 01:53:57 2005
+From: brainsick at sheep.berlios.de (Todd Ross at BerliOS)
+Date: Wed, 27 Apr 2005 01:53:57 +0200
+Subject: [Specie-svn] r11 - in trunk/chrome: content/specie locale/en-US/specie skin/specie
+Message-ID: <200504262353.j3QNrvap000669@sheep.berlios.de>
+
+Author: brainsick
+Date: 2005-04-27 01:53:33 +0200 (Wed, 27 Apr 2005)
+New Revision: 11
+
+Removed:
+   trunk/chrome/content/specie/contents.rdf
+   trunk/chrome/locale/en-US/specie/contents.rdf
+   trunk/chrome/skin/specie/contents.rdf
+Log:
+XULRunner-ize (obsolete contents.rdf)
+
+Deleted: trunk/chrome/content/specie/contents.rdf
+===================================================================
+--- trunk/chrome/content/specie/contents.rdf	2005-04-26 23:48:45 UTC (rev 10)
++++ trunk/chrome/content/specie/contents.rdf	2005-04-26 23:53:33 UTC (rev 11)
+@@ -1,20 +0,0 @@
+-<?xml version="1.0"?> 
+-
+-<RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+-	xmlns:chrome="http://www.mozilla.org/rdf/chrome#"> 
+-
+-	<RDF:Seq about="urn:mozilla:package:root"> 
+-		<RDF:li resource="urn:mozilla:package:specie"/> 
+-	</RDF:Seq> 
+-
+-	<RDF:Description about="urn:mozilla:package:specie" 
+-		chrome:displayName="specie"
+-		chrome:author="Todd Ross (specie at brainsick.com)" 
+-		chrome:authorURL="http://developer.berlios.de/projects/specie"
+-		chrome:name="specie"
+-		chrome:extension="true"
+-		chrome:settingsURL="chrome://specie/content/prefs.xul"
+-		chrome:description="Specie"> 
+-	</RDF:Description>
+-
+-</RDF:RDF>
+
+Deleted: trunk/chrome/locale/en-US/specie/contents.rdf
+===================================================================
+--- trunk/chrome/locale/en-US/specie/contents.rdf	2005-04-26 23:48:45 UTC (rev 10)
++++ trunk/chrome/locale/en-US/specie/contents.rdf	2005-04-26 23:53:33 UTC (rev 11)
+@@ -1,22 +0,0 @@
+-<?xml version="1.0"?>
+-
+-<RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+-	xmlns:chrome="http://www.mozilla.org/rdf/chrome#">
+-
+-	<RDF:Seq about="urn:mozilla:locale:root">
+-		<RDF:li resource="urn:mozilla:locale:en-US"/>
+-	</RDF:Seq>
+-
+-	<RDF:Description about="urn:mozilla:locale:en-US"
+-		chrome:author="Todd Ross (specie at brainsick.com)"
+-		chrome:displayName="English/United States [en-us]"
+-		chrome:name="en-US">
+-
+-		<chrome:packages>
+-			<RDF:Seq about="urn:mozilla:locale:en-US:packages">
+-				<RDF:li resource="urn:mozilla:locale:en-US:specie"/>
+-			</RDF:Seq>
+-		</chrome:packages>
+-	</RDF:Description>
+-
+-</RDF:RDF>
+
+Deleted: trunk/chrome/skin/specie/contents.rdf
+===================================================================
+--- trunk/chrome/skin/specie/contents.rdf	2005-04-26 23:48:45 UTC (rev 10)
++++ trunk/chrome/skin/specie/contents.rdf	2005-04-26 23:53:33 UTC (rev 11)
+@@ -1,18 +0,0 @@
+-<?xml version="1.0"?>
+-
+-<RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+-	xmlns:chrome="http://www.mozilla.org/rdf/chrome#">
+-
+-	<RDF:Seq about="urn:mozilla:skin:root">
+-		<RDF:li resource="urn:mozilla:skin:classic/1.0"/>
+-	</RDF:Seq>
+-
+-	<RDF:Description about="urn:mozilla:skin:classic/1.0">
+-		<chrome:packages>
+-			<RDF:Seq about="urn:mozilla:skin:classic/1.0:packages">
+-				<RDF:li resource="urn:mozilla:skin:classic/1.0:specie"/>
+-			</RDF:Seq>
+-		</chrome:packages>
+-	</RDF:Description>
+-
+-</RDF:RDF>
+
+
+
+From brainsick at sheep.berlios.de  Wed Apr 27 02:27:41 2005
+From: brainsick at sheep.berlios.de (Todd Ross at BerliOS)
+Date: Wed, 27 Apr 2005 02:27:41 +0200
+Subject: [Specie-svn] r12 - trunk/defaults/preferences
+Message-ID: <200504270027.j3R0RfoE018102@sheep.berlios.de>
+
+Author: brainsick
+Date: 2005-04-27 02:27:19 +0200 (Wed, 27 Apr 2005)
+New Revision: 12
+
+Modified:
+   trunk/defaults/preferences/specie-prefs.js
+Log:
+XULRunner-ize (remove unneeded pref)
+
+Modified: trunk/defaults/preferences/specie-prefs.js
+===================================================================
+--- trunk/defaults/preferences/specie-prefs.js	2005-04-26 23:53:33 UTC (rev 11)
++++ trunk/defaults/preferences/specie-prefs.js	2005-04-27 00:27:19 UTC (rev 12)
+@@ -1,2 +1 @@
+ pref("toolkit.defaultChromeURI", "chrome://specie/content/specie.xul");
+-pref("general.useragent.extra.specie", "Specie/0.1");
+
+
+

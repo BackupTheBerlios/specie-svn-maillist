@@ -1,0 +1,1393 @@
+From specie at brainsick.com  Fri Mar 18 12:36:44 2005
+From: specie at brainsick.com (Todd Ross)
+Date: Fri, 18 Mar 2005 05:36:44 -0600
+Subject: [Specie-svn] testing
+Message-ID: <423ABD4C.2010904@brainsick.com>
+
+This is a test message to see if the owner is subscribed to the list by
+default.
+
+
+
+From brainsick at sheep.berlios.de  Sun Mar 20 23:25:45 2005
+From: brainsick at sheep.berlios.de (Todd Ross at BerliOS)
+Date: Sun, 20 Mar 2005 23:25:45 +0100
+Subject: [Specie-svn] r3 - trunk/content/specie
+Message-ID: <200503202225.j2KMPjIb006320@sheep.berlios.de>
+
+Author: brainsick
+Date: 2005-03-20 23:25:44 +0100 (Sun, 20 Mar 2005)
+New Revision: 3
+
+Modified:
+   trunk/content/specie/Account.js
+   trunk/content/specie/Journal.js
+Log:
+Chart of Accounts
+
+Modified: trunk/content/specie/Account.js
+===================================================================
+--- trunk/content/specie/Account.js	2005-03-18 01:24:45 UTC (rev 2)
++++ trunk/content/specie/Account.js	2005-03-20 22:25:44 UTC (rev 3)
+@@ -37,9 +37,53 @@
+ /* $Id$ */
+ 
+ function Account() {
++	this.id = -1;
++	this.type = null;
++	this.name = "New Account";
++	this.description = "";
+ 	this.parent = null;
+-	this.type = null;
+-	this.name = null;
+ 	this.entries = new Array();
+ 	this.children = new Array();
+ }
++
++Account.prototype.appendChild = function(newChild) {
++	this.children.push(newChild);
++}
++
++Account.prototype.createChild = function() {
++	var newChild = new Account;
++	// this is severely flawed
++	newChild.id = this.id + "." + this.children.length;
++	newChild.type = this.type;
++	newChild.parent = this;
++	return newChild;
++}
++
++Account.prototype.removeChild = function(oldChild) {
++	for (var i = 0; i < this.children.length; i++) {
++		if (this.children[i] == oldChild) {
++			this.children.splice(i, 1);
++			return;
++		}
++	}
++
++	throw new Error("Unknown child Account.");
++}
++
++Account.prototype.hasChildAccounts = function() {
++	if (this.children.length > 0) {
++		return true;
++	} else {
++		return false;
++	}
++}
++
++Account.prototype.toString = function() {
++	return    "{"
++		+ "id:\"" + this.id + "\","
++		+ "type:\"" + this.type + "\","
++		+ "name:\"" + this.name + "\","
++		+ "description:\"" + this.description + "\","
++		+ "parent:" + (this.parent ? "\"" + this.parent.id + "\"": null)
++		+ "}";
++}
+
+Modified: trunk/content/specie/Journal.js
+===================================================================
+--- trunk/content/specie/Journal.js	2005-03-18 01:24:45 UTC (rev 2)
++++ trunk/content/specie/Journal.js	2005-03-20 22:25:44 UTC (rev 3)
+@@ -57,7 +57,7 @@
+ 		}
+ 	}
+ 
+-	throw new Error("Transaction isn't known.");
++	throw new Error("Unknown transaction.");
+ }
+ 
+ Journal.prototype.save = function() {
+
+
+
+From brainsick at sheep.berlios.de  Sun Mar 20 23:34:17 2005
+From: brainsick at sheep.berlios.de (Todd Ross at BerliOS)
+Date: Sun, 20 Mar 2005 23:34:17 +0100
+Subject: [Specie-svn] r4 - trunk/content/specie
+Message-ID: <200503202234.j2KMYHn1006773@sheep.berlios.de>
+
+Author: brainsick
+Date: 2005-03-20 23:34:17 +0100 (Sun, 20 Mar 2005)
+New Revision: 4
+
+Added:
+   trunk/content/specie/ChartOfAccounts.js
+   trunk/content/specie/ChartOfAccountsTest.html
+Log:
+Chart of Accounts
+
+Added: trunk/content/specie/ChartOfAccounts.js
+===================================================================
+--- trunk/content/specie/ChartOfAccounts.js	2005-03-20 22:25:44 UTC (rev 3)
++++ trunk/content/specie/ChartOfAccounts.js	2005-03-20 22:34:17 UTC (rev 4)
+@@ -0,0 +1,120 @@
++/* ***** BEGIN LICENSE BLOCK *****
++ * Version: MPL 1.1/GPL 2.0/LGPL 2.1
++ *
++ * The contents of this file are subject to the Mozilla Public License Version
++ * 1.1 (the "License"); you may not use this file except in compliance with
++ * the License. You may obtain a copy of the License at
++ * http://www.mozilla.org/MPL/
++ *
++ * Software distributed under the License is distributed on an "AS IS" basis,
++ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
++ * for the specific language governing rights and limitations under the
++ * License.
++ *
++ * The Original Code is Specie Classes.
++ *
++ * The Initial Developer of the Original Code is
++ * Todd Ross.
++ * Portions created by the Initial Developer are Copyright (C) 2005
++ * the Initial Developer. All Rights Reserved.
++ *
++ * Contributor(s):
++ *
++ * Alternatively, the contents of this file may be used under the terms of
++ * either the GNU General Public License Version 2 or later (the "GPL"), or
++ * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
++ * in which case the provisions of the GPL or the LGPL are applicable instead
++ * of those above. If you wish to allow use of your version of this file only
++ * under the terms of either the GPL or the LGPL, and not to allow others to
++ * use your version of this file under the terms of the MPL, indicate your
++ * decision by deleting the provisions above and replace them with the notice
++ * and other provisions required by the GPL or the LGPL. If you do not delete
++ * the provisions above, a recipient may use your version of this file under
++ * the terms of any one of the MPL, the GPL or the LGPL.
++ *
++ * ***** END LICENSE BLOCK ***** */
++
++/* $Id$ */
++
++function ChartOfAccounts() {
++	this.accounts = new Array();
++	this.filename = null;
++
++	// Used by private methods
++	var self = this;
++
++	// Private member
++	function flattenAccount(aAccount) {
++dump("aAccount.name: " + aAccount.name);
++		var returnValue = new Array();
++
++dump("aAccount.hasChildAccounts(): " + aAccount.hasChildAccounts());
++		returnValue.push(aAccount);
++		if (aAccount.hasChildAccounts()) {
++			for (var i = 0; i < aAccount.children.length; i++) {
++				returnValue = returnValue.concat(flattenAccount(aAccount.children[i]));
++			}
++		}
++
++dump("returnValue.length: " + returnValue.length);
++		return returnValue;
++	}
++
++	// Privelaged method
++	this.toString = function() {
++		var returnString = "";
++		var allAccounts = new Array();
++		for (var i = 0; i < this.accounts.length; i++) {
++			allAccounts = allAccounts.concat(flattenAccount(this.accounts[i]));
++		}
++dump("allAccounts.length: " + allAccounts.length);
++
++		returnString += "[";
++		for (var i = 0; i < allAccounts.length; i++) {
++			returnString += allAccounts[i].toString();
++			if (i < allAccounts.length - 1) {
++				returnString += ",";
++			}
++		}
++		returnString += "]";
++
++		return returnString;
++	}
++
++	// Initialize common accounts that all Charts share
++	var aAccount = new Account;
++	aAccount.id = 0;
++	aAccount.type = "A";
++	aAccount.name = "Asset";
++	this.accounts.push(aAccount);
++
++	aAccount = new Account;
++	aAccount.id = 1;
++	aAccount.type = "L";
++	aAccount.name = "Liability";
++	this.accounts.push(aAccount);
++
++	aAccount = new Account;
++	aAccount.id = 2;
++	aAccount.type = "P";
++	aAccount.name = "Equity";
++	this.accounts.push(aAccount);
++
++	aAccount = new Account;
++	aAccount.id = 3;
++	aAccount.type = "I";
++	aAccount.name = "Income";
++	this.accounts.push(aAccount);
++
++	aAccount = new Account();
++	aAccount.id = "4";
++	aAccount.type = "E";
++	aAccount.name = "Expense";
++	this.accounts.push(aAccount);
++}
++
++ChartOfAccounts.prototype.load = function(filename) {
++}
++
++ChartOfAccounts.prototype.save = function(filename) {
++}
+
+
+Property changes on: trunk/content/specie/ChartOfAccounts.js
+___________________________________________________________________
+Name: svn:keywords
+   + Id
+
+Added: trunk/content/specie/ChartOfAccountsTest.html
+===================================================================
+--- trunk/content/specie/ChartOfAccountsTest.html	2005-03-20 22:25:44 UTC (rev 3)
++++ trunk/content/specie/ChartOfAccountsTest.html	2005-03-20 22:34:17 UTC (rev 4)
+@@ -0,0 +1,90 @@
++<!-- ***** BEGIN LICENSE BLOCK *****
++   - Version: MPL 1.1/GPL 2.0/LGPL 2.1
++   -
++   - The contents of this file are subject to the Mozilla Public License Version
++   - 1.1 (the "License"); you may not use this file except in compliance with
++   - the License. You may obtain a copy of the License at
++   - http://www.mozilla.org/MPL/
++   -
++   - Software distributed under the License is distributed on an "AS IS" basis,
++   - WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
++   - for the specific language governing rights and limitations under the
++   - License.
++   -
++   - The Original Code is Specie Test Cases.
++   -
++   - The Initial Developer of the Original Code is
++   - Todd Ross.
++   - Portions created by the Initial Developer are Copyright (C) 2005
++   - the Initial Developer. All Rights Reserved.
++   -
++   - Contributor(s):
++   -
++   - Alternatively, the contents of this file may be used under the terms of
++   - either the GNU General Public License Version 2 or later (the "GPL"), or
++   - the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
++   - in which case the provisions of the GPL or the LGPL are applicable instead
++   - of those above. If you wish to allow use of your version of this file only
++   - under the terms of either the GPL or the LGPL, and not to allow others to
++   - use your version of this file under the terms of the MPL, indicate your
++   - decision by deleting the provisions above and replace them with the notice
++   - and other provisions required by the LGPL or the GPL. If you do not delete
++   - the provisions above, a recipient may use your version of this file under
++   - the terms of any one of the MPL, the GPL or the LGPL.
++   -
++   - ***** END LICENSE BLOCK ***** -->
++
++<!-- $Id$ -->
++
++<html>
++	<head>
++		<title>ChartOfAccountsTest.html</title>
++		<script type="text/javascript" src="ChartOfAccounts.js"></script>
++		<script type="text/javascript" src="Account.js"></script>
++		<script type="text/javascript">
++			function body_onload() {
++				var aChartOfAccounts = new ChartOfAccounts();
++
++				// This is really messy
++				var assetAccount = aChartOfAccounts.accounts[0];
++
++				var aSavingsAccount = assetAccount.createChild();
++				aSavingsAccount.name = "Savings";
++				assetAccount.appendChild(aSavingsAccount);
++
++				var aSubSavingsAccount = aSavingsAccount.createChild();
++				aSubSavingsAccount.name = "ABC Bank";
++				aSavingsAccount.appendChild(aSubSavingsAccount);
++
++				aSubSavingsAccount = aSavingsAccount.createChild();
++				aSubSavingsAccount.name = "XYZ Credit Union";
++				aSavingsAccount.appendChild(aSubSavingsAccount);
++
++				aAccount = assetAccount.createChild();
++				aAccount.name = "Checking";
++				assetAccount.appendChild(aAccount);
++
++				var liabilityAccount = aChartOfAccounts.accounts[1];
++
++				var aLiabilityAccount = liabilityAccount.createChild();
++				aLiabilityAccount.name = "Credit Card";
++				liabilityAccount.appendChild(aLiabilityAccount);
++
++				var aSubLiabilityAccount = aLiabilityAccount.createChild();
++				aSubLiabilityAccount.name = "ABC Bank";
++				aLiabilityAccount.appendChild(aSubLiabilityAccount);
++
++				var outputString = aChartOfAccounts.toString();
++				outputString = outputString.replace(/{/g, "\n\t{");
++				outputString = outputString.replace(/]$/, "\n]");
++				outputString.replace(/\n/g, "<br/>");
++
++				var output_div = document.getElementById("output");
++				output_div.innerHTML += "aChartOfAccounts.toString(): <br/>" + outputString.replace(/\n/g, "<br/>") + "<br/>";
++			}
++		</script>
++	</head>
++	<body onload="body_onload();">
++		<div id="output"></div>
++	</body>
++</html>
+
+
+Property changes on: trunk/content/specie/ChartOfAccountsTest.html
+___________________________________________________________________
+Name: svn:keywords
+   + Id
+
+
+
+From brainsick at sheep.berlios.de  Mon Mar 21 04:33:21 2005
+From: brainsick at sheep.berlios.de (Todd Ross at BerliOS)
+Date: Mon, 21 Mar 2005 04:33:21 +0100
+Subject: [Specie-svn] r5 - trunk/content/specie
+Message-ID: <200503210333.j2L3XL9X009396@sheep.berlios.de>
+
+Author: brainsick
+Date: 2005-03-21 04:32:52 +0100 (Mon, 21 Mar 2005)
+New Revision: 5
+
+Modified:
+   trunk/content/specie/Account.js
+   trunk/content/specie/ChartOfAccounts.js
+   trunk/content/specie/ChartOfAccountsTest.html
+   trunk/content/specie/Entry.js
+   trunk/content/specie/Journal.js
+   trunk/content/specie/JournalTest.html
+   trunk/content/specie/Transaction.js
+Log:
+normalize naming, flesh out Journal/Transaction/Entry details
+
+Modified: trunk/content/specie/Account.js
+===================================================================
+--- trunk/content/specie/Account.js	2005-03-20 22:34:17 UTC (rev 4)
++++ trunk/content/specie/Account.js	2005-03-21 03:32:52 UTC (rev 5)
+@@ -47,6 +47,10 @@
+ }
+ 
+ Account.prototype.appendChild = function(newChild) {
++	if (newChild.parent != this) {
++		throw new Error("Unexpected parent association.");
++	}
++
+ 	this.children.push(newChild);
+ }
+ 
+@@ -56,6 +60,7 @@
+ 	newChild.id = this.id + "." + this.children.length;
+ 	newChild.type = this.type;
+ 	newChild.parent = this;
++
+ 	return newChild;
+ }
+ 
+@@ -82,8 +87,8 @@
+ 	return    "{"
+ 		+ "id:\"" + this.id + "\","
+ 		+ "type:\"" + this.type + "\","
+-		+ "name:\"" + this.name + "\","
+-		+ "description:\"" + this.description + "\","
++		+ "name:\"" + this.name.replace(/"/, "\\\"") + "\","
++		+ "description:\"" + this.description.replace(/"/, "\\\"") + "\","
+ 		+ "parent:" + (this.parent ? "\"" + this.parent.id + "\"": null)
+ 		+ "}";
+ }
+
+Modified: trunk/content/specie/ChartOfAccounts.js
+===================================================================
+--- trunk/content/specie/ChartOfAccounts.js	2005-03-20 22:34:17 UTC (rev 4)
++++ trunk/content/specie/ChartOfAccounts.js	2005-03-21 03:32:52 UTC (rev 5)
+@@ -41,33 +41,30 @@
+ 	this.filename = null;
+ 
+ 	// Used by private methods
+-	var self = this;
++//	var self = this;
+ 
+ 	// Private member
+-	function flattenAccount(aAccount) {
+-dump("aAccount.name: " + aAccount.name);
++	function flattenAccount(anAccount) {
+ 		var returnValue = new Array();
+ 
+-dump("aAccount.hasChildAccounts(): " + aAccount.hasChildAccounts());
+-		returnValue.push(aAccount);
+-		if (aAccount.hasChildAccounts()) {
+-			for (var i = 0; i < aAccount.children.length; i++) {
+-				returnValue = returnValue.concat(flattenAccount(aAccount.children[i]));
++		returnValue.push(anAccount);
++		if (anAccount.hasChildAccounts()) {
++			for (var i = 0; i < anAccount.children.length; i++) {
++				returnValue = returnValue.concat(flattenAccount(anAccount.children[i]));
+ 			}
+ 		}
+ 
+-dump("returnValue.length: " + returnValue.length);
+ 		return returnValue;
+ 	}
+ 
+ 	// Privelaged method
+ 	this.toString = function() {
+ 		var returnString = "";
++
+ 		var allAccounts = new Array();
+ 		for (var i = 0; i < this.accounts.length; i++) {
+ 			allAccounts = allAccounts.concat(flattenAccount(this.accounts[i]));
+ 		}
+-dump("allAccounts.length: " + allAccounts.length);
+ 
+ 		returnString += "[";
+ 		for (var i = 0; i < allAccounts.length; i++) {
+@@ -82,39 +79,46 @@
+ 	}
+ 
+ 	// Initialize common accounts that all Charts share
+-	var aAccount = new Account;
+-	aAccount.id = 0;
+-	aAccount.type = "A";
+-	aAccount.name = "Asset";
+-	this.accounts.push(aAccount);
++	var anAccount = new Account;
++	anAccount.id = 0;
++	anAccount.type = "A";
++	anAccount.name = "Asset";
++	this.accounts.push(anAccount);
+ 
+-	aAccount = new Account;
+-	aAccount.id = 1;
+-	aAccount.type = "L";
+-	aAccount.name = "Liability";
+-	this.accounts.push(aAccount);
++	anAccount = new Account;
++	anAccount.id = 1;
++	anAccount.type = "L";
++	anAccount.name = "Liability";
++	this.accounts.push(anAccount);
+ 
+-	aAccount = new Account;
+-	aAccount.id = 2;
+-	aAccount.type = "P";
+-	aAccount.name = "Equity";
+-	this.accounts.push(aAccount);
++	anAccount = new Account;
++	anAccount.id = 2;
++	anAccount.type = "P";
++	anAccount.name = "Equity";
++	this.accounts.push(anAccount);
+ 
+-	aAccount = new Account;
+-	aAccount.id = 3;
+-	aAccount.type = "I";
+-	aAccount.name = "Income";
+-	this.accounts.push(aAccount);
++	anAccount = new Account;
++	anAccount.id = 3;
++	anAccount.type = "I";
++	anAccount.name = "Income";
++	this.accounts.push(anAccount);
+ 
+-	aAccount = new Account();
+-	aAccount.id = "4";
+-	aAccount.type = "E";
+-	aAccount.name = "Expense";
+-	this.accounts.push(aAccount);
++	anAccount = new Account();
++	anAccount.id = "4";
++	anAccount.type = "E";
++	anAccount.name = "Expense";
++	this.accounts.push(anAccount);
+ }
+ 
+ ChartOfAccounts.prototype.load = function(filename) {
+ }
+ 
+ ChartOfAccounts.prototype.save = function(filename) {
++	var outputString = this.toString();
++
++	// Just a little clean-up
++	outputString = outputString.replace(/{/g, "\n\t{");
++	outputString = outputString.replace(/]$/, "\n]");
++
++	// This is where it would be written to disk
+ }
+
+Modified: trunk/content/specie/ChartOfAccountsTest.html
+===================================================================
+--- trunk/content/specie/ChartOfAccountsTest.html	2005-03-20 22:34:17 UTC (rev 4)
++++ trunk/content/specie/ChartOfAccountsTest.html	2005-03-21 03:32:52 UTC (rev 5)
+@@ -77,7 +77,6 @@
+ 				var outputString = aChartOfAccounts.toString();
+ 				outputString = outputString.replace(/{/g, "\n\t{");
+ 				outputString = outputString.replace(/]$/, "\n]");
+-				outputString.replace(/\n/g, "<br/>");
+ 
+ 				var output_div = document.getElementById("output");
+ 				output_div.innerHTML += "aChartOfAccounts.toString(): <br/>" + outputString.replace(/\n/g, "<br/>") + "<br/>";
+
+Modified: trunk/content/specie/Entry.js
+===================================================================
+--- trunk/content/specie/Entry.js	2005-03-20 22:34:17 UTC (rev 4)
++++ trunk/content/specie/Entry.js	2005-03-21 03:32:52 UTC (rev 5)
+@@ -42,3 +42,12 @@
+ 	this.account = null;
+ 	this.value = null;
+ }
++
++Entry.prototype.toString = function() {
++	return    "{"
++		+ "type:\"" + this.type + "\","
++		+ "transaction:\"" + this.transaction.id + "\","
++		+ "account:\"" + this.account.id + "\","
++		+ "value:\"" + this.value + "\""
++		+ "}";
++}
+
+Modified: trunk/content/specie/Journal.js
+===================================================================
+--- trunk/content/specie/Journal.js	2005-03-20 22:34:17 UTC (rev 4)
++++ trunk/content/specie/Journal.js	2005-03-21 03:32:52 UTC (rev 5)
+@@ -46,7 +46,7 @@
+ 		return;
+ 	}
+ 
+-	throw new Error("Transaction isn't in balance.");
++	throw new Error("Transaction is not in balance.");
+ }
+ 
+ Journal.prototype.deleteTransaction = function(aTransaction) {
+
+Modified: trunk/content/specie/JournalTest.html
+===================================================================
+--- trunk/content/specie/JournalTest.html	2005-03-20 22:34:17 UTC (rev 4)
++++ trunk/content/specie/JournalTest.html	2005-03-21 03:32:52 UTC (rev 5)
+@@ -39,6 +39,7 @@
+ <html>
+ 	<head>
+ 		<title>JournalTest.html</title>
++		<script type="text/javascript" src="Account.js"></script>
+ 		<script type="text/javascript" src="Journal.js"></script>
+ 		<script type="text/javascript" src="Transaction.js"></script>
+ 		<script type="text/javascript" src="Entry.js"></script>
+@@ -46,31 +47,30 @@
+ 		function body_onload() {
+ 			var aJournal = new Journal();
+ 
++			var anAccount = new Account();
++			anAccount.id = 0;
++			anAccount.type = "A";
++			anAccount.name = "Asset";
++
+ 			var aTransaction = new Transaction();
+ 			aTransaction.date = new Date();
+ 			aTransaction.description = "Test Transaction";
+ 
+-			var aEntry = new Entry();
+-			aEntry.type = "C";
+-			aEntry.value = 100;
++			var anEntry = aTransaction.createEntry();
++			anEntry.type = "C";
++			anEntry.value = 100;
++			anEntry.account = anAccount;
++			aTransaction.appendEntry(anEntry);
+ 
+-			aTransaction.addEntry(aEntry);
++			anEntry = aTransaction.createEntry();
++			anEntry.type = "D";
++			anEntry.value = 100;
++			anEntry.account = anAccount;
++			aTransaction.appendEntry(anEntry);
+ 
+-			aEntry = new Entry();
+-			aEntry.type = "C";
+-			aEntry.value = 50;
+-
+-			aTransaction.addEntry(aEntry);
+-
+-			aEntry = new Entry();
+-			aEntry.type = "D";
+-			aEntry.value = 150;
+-
+-			aTransaction.addEntry(aEntry);
+-
+ 			var output_div = document.getElementById("output");
+-			output_div.innerHTML += "aTransaction.date: " + aTransaction.date + "<br/>";
+ 			output_div.innerHTML += "aTransaction.isBalanced(): " + aTransaction.isBalanced() + "<br/>";
++			output_div.innerHTML += "aTransaction.toString(): <br/>" + aTransaction.toString() + "<br/>";
+ 		}
+ 		</script>
+ 	</head>
+
+Modified: trunk/content/specie/Transaction.js
+===================================================================
+--- trunk/content/specie/Transaction.js	2005-03-20 22:34:17 UTC (rev 4)
++++ trunk/content/specie/Transaction.js	2005-03-21 03:32:52 UTC (rev 5)
+@@ -37,25 +37,40 @@
+ /* $Id$ */
+ 
+ function Transaction() {
++	this.id = -1;
++	this.description = null;
++	this.date = null;
+ 	this.entries = new Array();
+-	this.date = null;
+-	this.description = null;
+ }
+ 
+-Transaction.prototype.addEntry = function(aEntry) {
+-	aEntry.transaction = this;
+-	this.entries.push(aEntry);
++Transaction.prototype.appendEntry = function(newEntry) {
++	if (newEntry.transaction != this) {
++		throw new Error("Unexpected transaction association.");
++	}
++
++	if (newEntry.account == null) {
++		throw new Error("An Entry must be associated with an Account.");
++	}
++
++	this.entries.push(newEntry);
+ }
+ 
+-Transaction.prototype.deleteEntry = function(aEntry) {
++Transaction.prototype.createEntry = function() {
++	var newEntry = new Entry();
++	newEntry.transaction = this;
++
++	return newEntry;
++}
++
++Transaction.prototype.removeEntry = function(oldEntry) {
+ 	for (var i = 0; i < this.entries.length; i++) {
+-		if (this.entries[i] == aEntry) {
+-			this.transactions.splice(i, 1);
++		if (this.entries[i] == oldEntry) {
++			this.entries.splice(i, 1);
+ 			return;
+ 		}
+ 	}
+ 
+-	throw new Error("Entry isn't known.");
++	throw new Error("Unknown entry.");
+ }
+ 
+ Transaction.prototype.isBalanced = function() {
+@@ -76,3 +91,21 @@
+ 		return false;
+ 	}
+ }
++
++Transaction.prototype.toString = function() {
++	var returnString = "";
++
++	returnString += "{"
++		+ "description:\"" + this.description.replace(/"/, "\\\"") + "\","
++		+ "date:\"" + this.date.toString() + "\",";
++
++	returnString += "entries:[";
++	for (var i = 0; i < this.entries.length; i++) {
++		returnString += this.entries[i].toString();
++	}
++	returnString += "]";
++
++	returnString += "}";
++
++	return returnString;
++}
+
+
+
+From brainsick at sheep.berlios.de  Wed Mar 23 03:08:50 2005
+From: brainsick at sheep.berlios.de (Todd Ross at BerliOS)
+Date: Wed, 23 Mar 2005 03:08:50 +0100
+Subject: [Specie-svn] r6 - in trunk: content/specie locale/en-US/specie skin/specie
+Message-ID: <200503230208.j2N28oiw017242@sheep.berlios.de>
+
+Author: brainsick
+Date: 2005-03-23 03:07:58 +0100 (Wed, 23 Mar 2005)
+New Revision: 6
+
+Added:
+   trunk/content/specie/chartOfAccountsPanel.xul
+   trunk/content/specie/journalPanel.xul
+Modified:
+   trunk/content/specie/specie.js
+   trunk/content/specie/specie.xul
+   trunk/locale/en-US/specie/specie.dtd
+   trunk/skin/specie/specie.css
+Log:
+user interface work
+
+Added: trunk/content/specie/chartOfAccountsPanel.xul
+===================================================================
+--- trunk/content/specie/chartOfAccountsPanel.xul	2005-03-21 03:32:52 UTC (rev 5)
++++ trunk/content/specie/chartOfAccountsPanel.xul	2005-03-23 02:07:58 UTC (rev 6)
+@@ -0,0 +1,54 @@
++<?xml version="1.0"?>
++
++<!-- ***** BEGIN LICENSE BLOCK *****
++   - Version: MPL 1.1/GPL 2.0/LGPL 2.1
++   -
++   - The contents of this file are subject to the Mozilla Public License Version
++   - 1.1 (the "License"); you may not use this file except in compliance with
++   - the License. You may obtain a copy of the License at
++   - http://www.mozilla.org/MPL/
++   -
++   - Software distributed under the License is distributed on an "AS IS" basis,
++   - WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
++   - for the specific language governing rights and limitations under the
++   - License.
++   -
++   - The Original Code is Specie User Interface.
++   -
++   - The Initial Developer of the Original Code is
++   - Todd Ross.
++   - Portions created by the Initial Developer are Copyright (C) 2005
++   - the Initial Developer. All Rights Reserved.
++   -
++   - Contributor(s):
++   -
++   - Alternatively, the contents of this file may be used under the terms of
++   - either the GNU General Public License Version 2 or later (the "GPL"), or
++   - the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
++   - in which case the provisions of the GPL or the LGPL are applicable instead
++   - of those above. If you wish to allow use of your version of this file only
++   - under the terms of either the GPL or the LGPL, and not to allow others to
++   - use your version of this file under the terms of the MPL, indicate your
++   - decision by deleting the provisions above and replace them with the notice
++   - and other provisions required by the LGPL or the GPL. If you do not delete
++   - the provisions above, a recipient may use your version of this file under
++   - the terms of any one of the MPL, the GPL or the LGPL.
++   -
++   - ***** END LICENSE BLOCK ***** -->
++
++<!-- $Id$ -->
++
++<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
++<?xml-stylesheet href="chrome://specie/skin/" type="text/css"?>
++
++<!DOCTYPE window SYSTEM "chrome://specie/locale/">
++
++<window id="window_chartOfAccounts" title="&window.chartOfAccounts.title;"
++  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
++
++  <!-- script type="application/x-javascript" src="chartOfAccounts.js"/ -->
++
++  <label id="label_title" value="&window.chartOfAccounts.title;"/>
++  <hbox flex="1">
++  </hbox>
++</window>
+
+
+Property changes on: trunk/content/specie/chartOfAccountsPanel.xul
+___________________________________________________________________
+Name: svn:keywords
+   + Id
+
+Added: trunk/content/specie/journalPanel.xul
+===================================================================
+--- trunk/content/specie/journalPanel.xul	2005-03-21 03:32:52 UTC (rev 5)
++++ trunk/content/specie/journalPanel.xul	2005-03-23 02:07:58 UTC (rev 6)
+@@ -0,0 +1,54 @@
++<?xml version="1.0"?>
++
++<!-- ***** BEGIN LICENSE BLOCK *****
++   - Version: MPL 1.1/GPL 2.0/LGPL 2.1
++   -
++   - The contents of this file are subject to the Mozilla Public License Version
++   - 1.1 (the "License"); you may not use this file except in compliance with
++   - the License. You may obtain a copy of the License at
++   - http://www.mozilla.org/MPL/
++   -
++   - Software distributed under the License is distributed on an "AS IS" basis,
++   - WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
++   - for the specific language governing rights and limitations under the
++   - License.
++   -
++   - The Original Code is Specie User Interface.
++   -
++   - The Initial Developer of the Original Code is
++   - Todd Ross.
++   - Portions created by the Initial Developer are Copyright (C) 2005
++   - the Initial Developer. All Rights Reserved.
++   -
++   - Contributor(s):
++   -
++   - Alternatively, the contents of this file may be used under the terms of
++   - either the GNU General Public License Version 2 or later (the "GPL"), or
++   - the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
++   - in which case the provisions of the GPL or the LGPL are applicable instead
++   - of those above. If you wish to allow use of your version of this file only
++   - under the terms of either the GPL or the LGPL, and not to allow others to
++   - use your version of this file under the terms of the MPL, indicate your
++   - decision by deleting the provisions above and replace them with the notice
++   - and other provisions required by the LGPL or the GPL. If you do not delete
++   - the provisions above, a recipient may use your version of this file under
++   - the terms of any one of the MPL, the GPL or the LGPL.
++   -
++   - ***** END LICENSE BLOCK ***** -->
++
++<!-- $Id$ -->
++
++<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
++<?xml-stylesheet href="chrome://specie/skin/" type="text/css"?>
++
++<!DOCTYPE window SYSTEM "chrome://specie/locale/">
++
++<window id="window_journal" title="&window.journal.title;"
++  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
++
++  <!-- script type="application/x-javascript" src="journal.js"/ -->
++
++  <label id="label_title" value="&window.journal.title;"/>
++  <hbox flex="1">
++  </hbox>
++</window>
+
+
+Property changes on: trunk/content/specie/journalPanel.xul
+___________________________________________________________________
+Name: svn:keywords
+   + Id
+
+Modified: trunk/content/specie/specie.js
+===================================================================
+--- trunk/content/specie/specie.js	2005-03-21 03:32:52 UTC (rev 5)
++++ trunk/content/specie/specie.js	2005-03-23 02:07:58 UTC (rev 6)
+@@ -36,11 +36,7 @@
+ 
+ /* $Id$ */
+ 
+-function menuFileNew() {
++function doDisplayPanel(which) {
++  var contentFrame = document.getElementById("iframe_content");
++  contentFrame.setAttribute("src", which + "Panel.xul");
+ }
+-
+-function menuFileOpen() {
+-}
+-
+-function menuFileExit() {
+-}
+
+Modified: trunk/content/specie/specie.xul
+===================================================================
+--- trunk/content/specie/specie.xul	2005-03-21 03:32:52 UTC (rev 5)
++++ trunk/content/specie/specie.xul	2005-03-23 02:07:58 UTC (rev 6)
+@@ -38,54 +38,45 @@
+ 
+ <!-- $Id$ -->
+ 
+-<?xml-stylesheet href="chrome://specie/skin/specie.css" type="text/css"?>
++<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
++<?xml-stylesheet href="chrome://specie/skin/" type="text/css"?>
+ 
+ <!DOCTYPE window SYSTEM "chrome://specie/locale/specie.dtd">
+ 
+-<window title="&specie.title;"
+-  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
++<window id="window_specie" title="&window.specie.title;" onload="" onunload=""
++  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
++  persist="screenX screenY width height">
+ 
+-  <script type="application/x-javascript" src="chrome://specie/content/specie.js"/>
++  <script type="application/x-javascript" src="specie.js"/>
+ 
++  <commandset id="commands">
++    <command id="cmd_quit" oncommand="window.close();"/>
++    <command id="cmd_chart" oncommand="doDisplayPanel('chartOfAccounts');"/>
++    <command id="cmd_journal" oncommand="doDisplayPanel('journal');"/>
++  </commandset>
++
++  <keyset>
++    <key id="key_quit" key="&cmd.quit.key;" modifiers="accel" command="cmd_quit"/>
++  </keyset>
++
+   <toolbox>
+-    <menubar id="menubar">
+-      <menu label="&menubar.file;">
+-        <menupopup>
+-          <menuitem label="&menubar.file.new;" oncommand="menuFileNew();"/>
+-          <menuitem label="&menubar.file.open;" oncommand="menuFileOpen();"/>
+-          <menuitem label="&menubar.file.save;" oncommand="menuFileSave();"/>
+-          <menuseparator/>
+-          <menuitem label="&menubar.file.exit;" oncommand="menuFileExit();"/>
++    <menubar>
++      <menu id="menu_file" label="&menu.file.label;" accesskey="&menu.file.accesskey;">
++        <menupopup id="menupopup_file">
++          <menuitem id="menuitem_quit" label="&menuitem.quit.label;"
++            key="key_quit" accesskey="&menuitem.quit.accesskey;"
++            command="cmd_quit"/>
+         </menupopup>
+       </menu>
+-      <menu label="&menubar.help;">
+-        <menupopup>
+-          <menuitem label="&menubar.help.about;" oncommand="menuHelpAbout();"/>
+-        </menupopup>
+-      </menu>
+     </menubar>
+   </toolbox>
+-  <hbox flex="1">
+-    <vbox id="prefsCategories" class="listBox buttonBox">
+-      <button orient="vertical" class="buttonBoxButton" type="radio" group="navigation" label="Placeholder 1"/>
+-      <button orient="vertical" class="buttonBoxButton" type="radio" group="navigation" label="Placeholder 2"/>
++  <hbox id="hbox_content" flex="1">
++    <vbox id="vbox_navigation">
++      <button id="button_chartOfAccounts" orient="vertical" type="radio" group="navigation" label="&button.chartOfAccounts.label;" command="cmd_chart"/>
++      <button id="button_journal" orient="vertical" type="radio" group="navigation" label="&button.journal.label;" command="cmd_journal"/>
+     </vbox>
+     <vbox flex="1">
+-      <iframe id="content-frame" flex="1"/>
+-<!--
+-      <tree id="accounts-summary" flex="1">
+-        <treecols>
+-          <treecol id="account" label="&accounts-summary.account;" flex="2" primary="true"/>
+-          <treecol id="description" label="&accounts-summary.description;" flex="3"/>
+-          <treecol id="balance" label="&accounts-summary.balance;" flex="1"/>
+-        </treecols>
+-        <treechildren>
+-        </treechildren>
+-      </tree>
+--->
++      <iframe id="iframe_content" flex="1"/>
+     </vbox>
+   </hbox>
+-  <statusbar>
+-    <statusbarpanel id="status-text" label="Testing"/>
+-  </statusbar>
+ </window>
+
+Modified: trunk/locale/en-US/specie/specie.dtd
+===================================================================
+--- trunk/locale/en-US/specie/specie.dtd	2005-03-21 03:32:52 UTC (rev 5)
++++ trunk/locale/en-US/specie/specie.dtd	2005-03-23 02:07:58 UTC (rev 6)
+@@ -34,19 +34,18 @@
+    -
+    - ***** END LICENSE BLOCK ***** -->
+ 
+-<!ENTITY specie.title "Specie">
+-<!ENTITY menubar.file "File">
+-<!ENTITY menubar.file.new "New">
+-<!ENTITY menubar.file.open "Open">
+-<!ENTITY menubar.file.save "Save">
+-<!ENTITY menubar.file.exit "Exit">
+-<!ENTITY menubar.help "Help">
+-<!ENTITY menubar.help.about "About">
+-<!ENTITY accounts-summary.account "Account">
+-<!ENTITY accounts-summary.description "Description">
+-<!ENTITY accounts-summary.balance "Balance">
+-<!ENTITY accounts.asset "Asset">
+-<!ENTITY accounts.liability "Liability">
+-<!ENTITY accounts.equity "Equity">
+-<!ENTITY accounts.income "Income">
+-<!ENTITY accounts.expense "Expense">
++<!ENTITY window.specie.title "Specie">
++
++<!ENTITY cmd.quit.key "Q">
++
++<!ENTITY menu.file.label "File">
++<!ENTITY menu.file.accesskey "f">
++
++<!ENTITY menuitem.quit.label "Quit">
++<!ENTITY menuitem.quit.accesskey "q">
++
++<!ENTITY button.chartOfAccounts.label "Chart of Accounts">
++<!ENTITY button.journal.label "Journal">
++
++<!ENTITY window.chartOfAccounts.title "Chart Of Accounts">
++<!ENTITY window.journal.title "Journal">
+
+Modified: trunk/skin/specie/specie.css
+===================================================================
+--- trunk/skin/specie/specie.css	2005-03-21 03:32:52 UTC (rev 5)
++++ trunk/skin/specie/specie.css	2005-03-23 02:07:58 UTC (rev 6)
+@@ -36,6 +36,31 @@
+ 
+ /* $Id$ */
+ 
+-/* #accounts-summary {
+-	margin-right: 0;
+-} */
++#hbox_content {
++  padding: 10px;
++}
++
++#hbox_content vbox:first-child {
++  margin-right: 10px;
++}
++
++#vbox_navigation {
++  background-color: white;
++  border: 1px inset;
++}
++
++#vbox_navigation button {
++  margin-top: 5px;
++}
++
++#label_title {
++  background-color: RGB(0, 0, 95);
++  border: 1px inset;
++  color: white;
++  font-size: large;
++  font-weight: bold;
++  margin: 0;
++  margin-bottom: 10px;
++  padding: 5px;
++  padding-left: 10px;
++}
+
+
+
+From brainsick at sheep.berlios.de  Thu Mar 24 02:39:11 2005
+From: brainsick at sheep.berlios.de (Todd Ross at BerliOS)
+Date: Thu, 24 Mar 2005 02:39:11 +0100
+Subject: [Specie-svn] r7 - in trunk: content/specie locale/en-US/specie skin/specie
+Message-ID: <200503240139.j2O1dBku025998@sheep.berlios.de>
+
+Author: brainsick
+Date: 2005-03-24 02:38:38 +0100 (Thu, 24 Mar 2005)
+New Revision: 7
+
+Added:
+   trunk/locale/en-US/specie/specie.properties
+Modified:
+   trunk/content/specie/chartOfAccountsPanel.xul
+   trunk/content/specie/specie.js
+   trunk/content/specie/specie.xul
+   trunk/locale/en-US/specie/specie.dtd
+   trunk/skin/specie/specie.css
+Log:
+chartOfAccounts tree stub, file open stub, properties
+
+Modified: trunk/content/specie/chartOfAccountsPanel.xul
+===================================================================
+--- trunk/content/specie/chartOfAccountsPanel.xul	2005-03-23 02:07:58 UTC (rev 6)
++++ trunk/content/specie/chartOfAccountsPanel.xul	2005-03-24 01:38:38 UTC (rev 7)
+@@ -49,6 +49,13 @@
+   <!-- script type="application/x-javascript" src="chartOfAccounts.js"/ -->
+ 
+   <label id="label_title" value="&window.chartOfAccounts.title;"/>
+-  <hbox flex="1">
+-  </hbox>
++  <tree id="tree_summary" flex="1">
++    <treecols>
++      <treecol id="treecol_account" label="&treecol.account.label;" flex="2" primary="true"/>
++      <treecol id="treecol_description" label="&treecol.description.label;" flex="3"/>
++      <treecol id="treecol_balance" label="&treecol.balance.label;" flex="1"/>
++    </treecols>
++    <treechildren id="treechildren_summary">
++    </treechildren>
++  </tree>
+ </window>
+
+Modified: trunk/content/specie/specie.js
+===================================================================
+--- trunk/content/specie/specie.js	2005-03-23 02:07:58 UTC (rev 6)
++++ trunk/content/specie/specie.js	2005-03-24 01:38:38 UTC (rev 7)
+@@ -40,3 +40,34 @@
+   var contentFrame = document.getElementById("iframe_content");
+   contentFrame.setAttribute("src", which + "Panel.xul");
+ }
++
++function doFileOpen(options) {
++  var strbundle = document.getElementById("stringbundle_specie");
++  var filename = "";
++
++  if (options && options.filename) {
++    filename = options.filename;
++  } else {
++    var nsIFilePicker = Components.interfaces.nsIFilePicker;
++    var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
++
++    fp.init(window, strbundle.getString("filepicker.open.title"), nsIFilePicker.modeOpen);
++    fp.appendFilter("Specie Files", "*.spc");
++
++    var res = fp.show();
++    if (res == nsIFilePicker.returnOK) {
++      filename = fp.file;
++    } else {
++      return;
++    }
++  }
++
++  var nsILocalFile = Components.interfaces.nsILocalFile;
++  var file = Components.classes["@mozilla.org/file/local;1"].createInstance(nsILocalFile);
++
++  file.initWithPath(filename);
++  if (!file.exists()) {
++    alert("filename: " + filename);
++    alert(strbundle.getFormattedString("file.exists.not", [filename]));
++  }
++}
+
+Modified: trunk/content/specie/specie.xul
+===================================================================
+--- trunk/content/specie/specie.xul	2005-03-23 02:07:58 UTC (rev 6)
++++ trunk/content/specie/specie.xul	2005-03-24 01:38:38 UTC (rev 7)
+@@ -47,15 +47,21 @@
+   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+   persist="screenX screenY width height">
+ 
++  <stringbundleset>
++    <stringbundle id="stringbundle_specie" src="chrome://specie/locale/specie.properties"/>
++  </stringbundleset>
++
+   <script type="application/x-javascript" src="specie.js"/>
+ 
+   <commandset id="commands">
++    <command id="cmd_open" oncommand="doFileOpen();"/>
+     <command id="cmd_quit" oncommand="window.close();"/>
+     <command id="cmd_chart" oncommand="doDisplayPanel('chartOfAccounts');"/>
+     <command id="cmd_journal" oncommand="doDisplayPanel('journal');"/>
+   </commandset>
+ 
+   <keyset>
++    <key id="key_open" key="&cmd.open.key;" modifiers="accel" command="cmd_open"/>
+     <key id="key_quit" key="&cmd.quit.key;" modifiers="accel" command="cmd_quit"/>
+   </keyset>
+ 
+@@ -63,6 +69,10 @@
+     <menubar>
+       <menu id="menu_file" label="&menu.file.label;" accesskey="&menu.file.accesskey;">
+         <menupopup id="menupopup_file">
++          <menuitem id="menuitem_open" label="&menuitem.open.label;"
++            key="key_open" accesskey="&menuitem.open.accesskey;"
++            command="cmd_open"/>
++          <menuseparator/>
+           <menuitem id="menuitem_quit" label="&menuitem.quit.label;"
+             key="key_quit" accesskey="&menuitem.quit.accesskey;"
+             command="cmd_quit"/>
+
+Modified: trunk/locale/en-US/specie/specie.dtd
+===================================================================
+--- trunk/locale/en-US/specie/specie.dtd	2005-03-23 02:07:58 UTC (rev 6)
++++ trunk/locale/en-US/specie/specie.dtd	2005-03-24 01:38:38 UTC (rev 7)
+@@ -37,10 +37,13 @@
+ <!ENTITY window.specie.title "Specie">
+ 
+ <!ENTITY cmd.quit.key "Q">
++<!ENTITY cmd.open.key "O">
+ 
+ <!ENTITY menu.file.label "File">
+ <!ENTITY menu.file.accesskey "f">
+ 
++<!ENTITY menuitem.open.label "Open">
++<!ENTITY menuitem.open.accesskey "o">
+ <!ENTITY menuitem.quit.label "Quit">
+ <!ENTITY menuitem.quit.accesskey "q">
+ 
+@@ -49,3 +52,7 @@
+ 
+ <!ENTITY window.chartOfAccounts.title "Chart Of Accounts">
+ <!ENTITY window.journal.title "Journal">
++
++<!ENTITY treecol.account.label "Account">
++<!ENTITY treecol.description.label "Description">
++<!ENTITY treecol.balance.label "Balance">
+
+Added: trunk/locale/en-US/specie/specie.properties
+===================================================================
+--- trunk/locale/en-US/specie/specie.properties	2005-03-23 02:07:58 UTC (rev 6)
++++ trunk/locale/en-US/specie/specie.properties	2005-03-24 01:38:38 UTC (rev 7)
+@@ -0,0 +1,38 @@
++# ***** BEGIN LICENSE BLOCK *****
++# Version: MPL 1.1/GPL 2.0/LGPL 2.1
++#
++# The contents of this file are subject to the Mozilla Public License Version
++# 1.1 (the "License"); you may not use this file except in compliance with
++# the License. You may obtain a copy of the License at
++# http://www.mozilla.org/MPL/
++#
++# Software distributed under the License is distributed on an "AS IS" basis,
++# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
++# for the specific language governing rights and limitations under the
++# License.
++#
++# The Original Code is Specie User Interface.
++#
++# The Initial Developer of the Original Code is
++# Todd Ross.
++# Portions created by the Initial Developer are Copyright (C) 2005
++# the Initial Developer. All Rights Reserved.
++#
++# Contributor(s):
++#
++# Alternatively, the contents of this file may be used under the terms of
++# either the GNU General Public License Version 2 or later (the "GPL"), or
++# the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
++# in which case the provisions of the GPL or the LGPL are applicable instead
++# of those above. If you wish to allow use of your version of this file only
++# under the terms of either the GPL or the LGPL, and not to allow others to
++# use your version of this file under the terms of the MPL, indicate your
++# decision by deleting the provisions above and replace them with the notice
++# and other provisions required by the LGPL or the GPL. If you do not delete
++# the provisions above, a recipient may use your version of this file under
++# the terms of any one of the MPL, the GPL or the LGPL.
++#
++# ***** END LICENSE BLOCK *****
++
++file.exists.not = File %s doesn't exist
++filepicker.open.title = File Open
+
+Modified: trunk/skin/specie/specie.css
+===================================================================
+--- trunk/skin/specie/specie.css	2005-03-23 02:07:58 UTC (rev 6)
++++ trunk/skin/specie/specie.css	2005-03-24 01:38:38 UTC (rev 7)
+@@ -46,7 +46,7 @@
+ 
+ #vbox_navigation {
+   background-color: white;
+-  border: 1px inset;
++  border: thin inset;
+ }
+ 
+ #vbox_navigation button {
+@@ -55,7 +55,7 @@
+ 
+ #label_title {
+   background-color: RGB(0, 0, 95);
+-  border: 1px inset;
++  border: thin inset;
+   color: white;
+   font-size: large;
+   font-weight: bold;
+@@ -64,3 +64,8 @@
+   padding: 5px;
+   padding-left: 10px;
+ }
++
++/* should probably be moved to chartOfAccountsPanel.css */
++#tree_summary {
++  margin: 0;
++}
+
+
+
+From brainsick at sheep.berlios.de  Thu Mar 24 03:24:33 2005
+From: brainsick at sheep.berlios.de (Todd Ross at BerliOS)
+Date: Thu, 24 Mar 2005 03:24:33 +0100
+Subject: [Specie-svn] r8 - in trunk: content/specie locale/en-US/specie
+Message-ID: <200503240224.j2O2OXrm015242@sheep.berlios.de>
+
+Author: brainsick
+Date: 2005-03-24 03:24:10 +0100 (Thu, 24 Mar 2005)
+New Revision: 8
+
+Modified:
+   trunk/content/specie/specie.js
+   trunk/content/specie/specie.xul
+   trunk/locale/en-US/specie/specie.dtd
+   trunk/locale/en-US/specie/specie.properties
+Log:
+file new stub
+
+Modified: trunk/content/specie/specie.js
+===================================================================
+--- trunk/content/specie/specie.js	2005-03-24 01:38:38 UTC (rev 7)
++++ trunk/content/specie/specie.js	2005-03-24 02:24:10 UTC (rev 8)
+@@ -41,6 +41,10 @@
+   contentFrame.setAttribute("src", which + "Panel.xul");
+ }
+ 
++function doNew() {
++  
++}
++
+ function doFileOpen(options) {
+   var strbundle = document.getElementById("stringbundle_specie");
+   var filename = "";
+
+Modified: trunk/content/specie/specie.xul
+===================================================================
+--- trunk/content/specie/specie.xul	2005-03-24 01:38:38 UTC (rev 7)
++++ trunk/content/specie/specie.xul	2005-03-24 02:24:10 UTC (rev 8)
+@@ -54,6 +54,7 @@
+   <script type="application/x-javascript" src="specie.js"/>
+ 
+   <commandset id="commands">
++    <command id="cmd_new" oncommand="doFileNew();"/>
+     <command id="cmd_open" oncommand="doFileOpen();"/>
+     <command id="cmd_quit" oncommand="window.close();"/>
+     <command id="cmd_chart" oncommand="doDisplayPanel('chartOfAccounts');"/>
+@@ -61,6 +62,7 @@
+   </commandset>
+ 
+   <keyset>
++    <key id="key_new" key="&cmd.new.key;" modifiers="accel" command="cmd_new"/>
+     <key id="key_open" key="&cmd.open.key;" modifiers="accel" command="cmd_open"/>
+     <key id="key_quit" key="&cmd.quit.key;" modifiers="accel" command="cmd_quit"/>
+   </keyset>
+@@ -69,6 +71,9 @@
+     <menubar>
+       <menu id="menu_file" label="&menu.file.label;" accesskey="&menu.file.accesskey;">
+         <menupopup id="menupopup_file">
++          <menuitem id="menuitem_new" label="&menuitem.new.label;"
++            key="key_new" accesskey="&menuitem.new.accesskey;"
++            command="cmd_new"/>
+           <menuitem id="menuitem_open" label="&menuitem.open.label;"
+             key="key_open" accesskey="&menuitem.open.accesskey;"
+             command="cmd_open"/>
+
+Modified: trunk/locale/en-US/specie/specie.dtd
+===================================================================
+--- trunk/locale/en-US/specie/specie.dtd	2005-03-24 01:38:38 UTC (rev 7)
++++ trunk/locale/en-US/specie/specie.dtd	2005-03-24 02:24:10 UTC (rev 8)
+@@ -34,14 +34,19 @@
+    -
+    - ***** END LICENSE BLOCK ***** -->
+ 
++<!-- $Id$ -->
++
+ <!ENTITY window.specie.title "Specie">
+ 
++<!ENTITY cmd.new.key "N">
+ <!ENTITY cmd.quit.key "Q">
+ <!ENTITY cmd.open.key "O">
+ 
+ <!ENTITY menu.file.label "File">
+ <!ENTITY menu.file.accesskey "f">
+ 
++<!ENTITY menuitem.new.label "New">
++<!ENTITY menuitem.new.accesskey "n">
+ <!ENTITY menuitem.open.label "Open">
+ <!ENTITY menuitem.open.accesskey "o">
+ <!ENTITY menuitem.quit.label "Quit">
+
+Modified: trunk/locale/en-US/specie/specie.properties
+===================================================================
+--- trunk/locale/en-US/specie/specie.properties	2005-03-24 01:38:38 UTC (rev 7)
++++ trunk/locale/en-US/specie/specie.properties	2005-03-24 02:24:10 UTC (rev 8)
+@@ -34,5 +34,7 @@
+ #
+ # ***** END LICENSE BLOCK *****
+ 
++# $Id$ #
++
+ file.exists.not = File %s doesn't exist
+ filepicker.open.title = File Open
+
+
+Property changes on: trunk/locale/en-US/specie/specie.properties
+___________________________________________________________________
+Name: svn:keywords
+   + Id
+
+
+
